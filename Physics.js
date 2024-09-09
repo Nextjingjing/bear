@@ -1,5 +1,32 @@
 import Matter from "matter-js";
 
+// ฟังก์ชัน debounce เพื่อลดความถี่ของการเรียกฟังก์ชัน
+function debounce(func, delay) {
+  let timeoutId;
+  return (...args) => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    timeoutId = setTimeout(() => {
+      func(...args);
+    }, delay);
+  };
+}
+
+// ฟังก์ชันที่จะใช้ในการปรับค่า gravity ด้วย debounce
+const adjustGravity = (engine, deltaY) => {
+  if (deltaY < 0) {
+    // เมื่อ swipe ขึ้น, ให้ gravity ดึงขึ้น
+    engine.gravity.y = -0.4;
+  } else if (deltaY > 0) {
+    // เมื่อ swipe ลง, ให้ gravity ดึงลง
+    engine.gravity.y = 0.4;
+  }
+};
+
+// สร้างฟังก์ชัน debounce สำหรับปรับ gravity
+const debouncedAdjustGravity = debounce(adjustGravity, 40);
+
 const Physics = (entities, { touches, time, dispatch }) => {
   let engine = entities.physics.engine;
 
@@ -10,17 +37,11 @@ const Physics = (entities, { touches, time, dispatch }) => {
     // Calculate the direction of touch movement (deltaY)
     const deltaY = move.delta.pageY;
 
-    // Adjust gravity based on touch movement (up or down)
-    if (deltaY < 0) {
-      // When swiping upwards, make gravity pull upwards (negative gravity)
-      engine.gravity.y = -0.4;  // Adjust this value as needed for stronger or weaker upward gravity
-    } else if (deltaY > 0) {
-      // When swiping downwards, make gravity pull downwards (positive gravity)
-      engine.gravity.y = 0.4;   // Adjust this value as needed for stronger or weaker downward gravity
-    }
+    // ใช้ฟังก์ชัน debounced เพื่อหน่วงเวลาการเปลี่ยน gravity
+    debouncedAdjustGravity(engine, deltaY);
   }
 
-  // Update the engine with the current time step
+  // อัปเดต engine ด้วย time step ปัจจุบัน
   Matter.Engine.update(engine, time.delta);
 
   return entities;
