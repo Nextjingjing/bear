@@ -17,10 +17,10 @@ function debounce(func, delay) {
 const adjustGravity = (engine, deltaY) => {
   if (deltaY < 0) {
     // เมื่อ swipe ขึ้น, ให้ gravity ดึงขึ้น
-    engine.gravity.y = -0.4;
+    engine.gravity.y = -0.35;
   } else if (deltaY > 0) {
     // เมื่อ swipe ลง, ให้ gravity ดึงลง
-    engine.gravity.y = 0.4;
+    engine.gravity.y = 0.35;
   }
 };
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { View, Image } from "react-native";
 import Matter from "matter-js";
 
 const Bear = props => {
@@ -9,23 +9,22 @@ const Bear = props => {
     const xBody = props.body.position.x - widthBody / 2;
     const yBody = props.body.position.y - heightBody / 2;
 
-    const color = props.color;
-
     return (
-        <View style={{
-            borderWidth: 1,
-            borderColor: color,
-            borderStyle: 'solid',
-            position: 'absolute',
-            left: xBody,
-            top: yBody,
-            width: widthBody,
-            height: heightBody
-        }} />
+        <Image
+            source={require('../assets/bear.jpg')} // Path to the bear image
+            style={{
+                position: 'absolute',
+                left: xBody,
+                top: yBody,
+                width: widthBody,
+                height: heightBody,
+                resizeMode: 'contain' // Makes sure the image fits within the dimensions
+            }}
+        />
     );
 };
 
-// เพิ่มพารามิเตอร์ world
+// Adding world parameter
 export default (world, color, pos, size) => {
     const initialBear = Matter.Bodies.rectangle(
         pos.x,
@@ -35,7 +34,7 @@ export default (world, color, pos, size) => {
         { label: 'Bear' }
     );
 
-    // เพิ่ม Bear ลงใน world ของ Matter.js
+    // Add Bear to Matter.js world
     Matter.World.add(world, initialBear);
 
     return {
