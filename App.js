@@ -7,13 +7,19 @@ import Physics from './Physics';
 
 export default function App() {
   const [running, setRunning] = useState(false);
-  
+
   useEffect(() => {
     setRunning(true);
   }, []);
 
+  const handleEvent = (e) => {
+    if (e.type === 'game-over') {
+      setRunning(false); // Stops the game
+    }
+  };
+
   return (
-    <ImageBackground 
+    <ImageBackground
       source={require('./assets/background.jpg')}
       style={{flex: 1}}
     >
@@ -21,6 +27,7 @@ export default function App() {
         systems={[Physics]}
         entities={entities()}
         running={running}
+        onEvent={handleEvent} // Handle game events like game-over
         style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0}}
       >
       </GameEngine>
@@ -28,3 +35,4 @@ export default function App() {
     </ImageBackground>
   );
 }
+

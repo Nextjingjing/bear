@@ -34,6 +34,7 @@ const debouncedAdjustGravity = debounce(adjustGravity, 40);
 
 const Physics = (entities, { touches, time, dispatch }) => {
   let engine = entities.physics.engine;
+  let bearBody = entities.Bear.body;
 
   // Find the first 'move' touch event, if there is one
   let move = touches.find(t => t.type === 'move');
@@ -49,16 +50,30 @@ const Physics = (entities, { touches, time, dispatch }) => {
   // อัปเดต engine ด้วย time step ปัจจุบัน
   Matter.Engine.update(engine, time.delta);
 
-  for(let i = 1; i <= 2; i++) {
+  // Check for collisions between Bear and Obstacles
+  Matter.Events.on(engine, "collisionStart", (event) => {
+    event.pairs.forEach((collision) => {
+      const { bodyA, bodyB } = collision;
+
+      // If Bear collides with any obstacle
+      if ((bodyA === bearBody && bodyB.label.startsWith('Obstacle')) || 
+          (bodyB === bearBody && bodyA.label.startsWith('Obstacle'))) {
+        // Handle collision (e.g., end the game, reduce health, etc.)
+        dispatch({ type: "game-over" }); // You can dispatch a game over event
+      }
+    });
+  });
+
+  for (let i = 1; i <= 2; i++) {
     // Check if the obstacle has moved out of the screen (x <= 0)
     if (entities[`ObstacleTop${i}`].body.bounds.max.x <= 0) {
       const pipeSizePos = getPipeSizePosPair(windowWidth * 0.9);
-      
+
       // Reset the position of the top obstacle
       if (entities[`ObstacleTop${i}`] && entities[`ObstacleTop${i}`].body) {
         Matter.Body.setPosition(entities[`ObstacleTop${i}`].body, pipeSizePos.pipeTop.pos);
       }
-      
+
       // Reset the position of the bottom obstacle
       if (entities[`ObstacleBottom${i}`] && entities[`ObstacleBottom${i}`].body) {
         Matter.Body.setPosition(entities[`ObstacleBottom${i}`].body, pipeSizePos.pipeBottom.pos);
