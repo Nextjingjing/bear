@@ -27,15 +27,15 @@ const Obstacle = props => {
 };
 
 // เพิ่มพารามิเตอร์ world
-export default (world, color, pos, size) => {
+export default (world, label, color, pos, size) => {
     const initialObstacle = Matter.Bodies.rectangle(
         pos.x,
         pos.y,
         size.width,
         size.height,
         { 
-        label: 'Obstacle', 
-        isStatic: true
+            label,
+            isStatic: true
         }
     );
 
@@ -43,7 +43,7 @@ export default (world, color, pos, size) => {
     Matter.World.add(world, initialObstacle);
 
     return {
-        body: initialFloor,
+        body: initialObstacle,
         color,
         pos,
         renderer: <Obstacle/>
