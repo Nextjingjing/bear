@@ -1,5 +1,6 @@
 import Matter from "matter-js";
-import { getPipeSizePosPair, getRandom } from "./utils/random"; // เพิ่ม getRandom เพื่อใช้ในการสุ่มตำแหน่ง y
+import React from "react";
+import { getPipeSizePosPair, getRandom } from "./utils/random";
 import { Dimensions } from "react-native";
 
 const windowHeight = Dimensions.get('window').height;
@@ -29,25 +30,42 @@ const adjustGravity = (engine, deltaY) => {
 
 const debouncedAdjustGravity = debounce(adjustGravity, 100);
 
-// This should be called only once when initializing the engine
-const setupCollisionListener = (engine, dispatch, bearBody) => {
+// ฟังก์ชันนี้จะถูกเรียกครั้งเดียวตอนที่ทำการเริ่มต้น engine
+const setupCollisionListener = (engine, dispatch, bearBody, entities) => {
   Matter.Events.on(engine, "collisionStart", (event) => {
     event.pairs.forEach((collision) => {
       const { bodyA, bodyB } = collision;
 
-      // If Bear collides with any obstacle
+      // หากหมีชนกับสิ่งกีดขวางใดๆ
       if ((bodyA === bearBody && bodyB.label.startsWith('Obstacle')) || 
           (bodyB === bearBody && bodyA.label.startsWith('Obstacle'))) {
         dispatch({ type: "game-over" });
       }
 
-      // If Bear collides with a coin
+      // หากหมีชนกับเหรียญ
       if ((bodyA === bearBody && bodyB.label === 'Coin') || 
           (bodyB === bearBody && bodyA.label === 'Coin')) {
         const coinBody = bodyA.label === 'Coin' ? bodyA : bodyB;
+        
+        // ลบเหรียญออกจากโลกของ Matter.js
         Matter.World.remove(engine.world, coinBody);
-        console.log("getting coin");
         dispatch({ type: "coin-collected" });
+
+        entities['Coin'].coinCollected = true; // บันทึกว่าเหรียญถูกเก็บแล้ว
+        entities['Coin'].body = null; // ล้างค่า body ของเหรียญออกจาก entities
+
+        // สร้างเหรียญใหม่ในตำแหน่งใหม่
+        const newCoinPos = { x: windowWidth + getRandom(25, 88), y: getRandom(102, windowHeight - 50) };
+        const newCoin = Matter.Bodies.rectangle(newCoinPos.x, newCoinPos.y, 20, 20, {
+          label: 'Coin',
+          isStatic: true,
+          isSensor: true
+        });
+
+        Matter.World.add(engine.world, newCoin); // เพิ่มเหรียญใหม่เข้าไปในโลก
+        entities['Coin'].body = newCoin; // อัปเดต body ใหม่เข้าไปใน entities
+        entities['Coin'].coinCollected = false; // รีเซ็ตสถานะการเก็บเหรียญ
+        // console.log("Coin reset and created again");
       }
     });
   });
@@ -57,10 +75,10 @@ const Physics = (entities, { touches, time, dispatch }) => {
   let engine = entities.physics.engine;
   let bearBody = entities.Bear.body;
 
-  // Only set up the collision listener once
+  // ตั้งค่า collision listener หนึ่งครั้ง
   if (!engine.collisionListenerSetup) {
-    setupCollisionListener(engine, dispatch, bearBody);
-    engine.collisionListenerSetup = true; // To prevent adding multiple listeners
+    setupCollisionListener(engine, dispatch, bearBody, entities);
+    engine.collisionListenerSetup = true; // ป้องกันการเพิ่ม listener หลายครั้ง
   }
 
   let move = touches.find(t => t.type === 'move');
@@ -69,10 +87,11 @@ const Physics = (entities, { touches, time, dispatch }) => {
     debouncedAdjustGravity(engine, deltaY);
   }
 
-  // Cap the delta time at 16.667 ms (which is equivalent to 60 FPS)
+  // จำกัดเวลาสูงสุดของ delta ที่ 16.667 ms (เทียบเท่ากับ 60 FPS)
   const maxDelta = 15;
   Matter.Engine.update(engine, Math.min(time.delta, maxDelta));
 
+  // จัดการกับอุปสรรค
   for (let i = 1; i <= 2; i++) {
     if (entities[`ObstacleTop${i}`].body.bounds.max.x <= 0) {
       const pipeSizePos = getPipeSizePosPair(windowWidth * 0.9);
@@ -80,23 +99,25 @@ const Physics = (entities, { touches, time, dispatch }) => {
       Matter.Body.setPosition(entities[`ObstacleBottom${i}`].body, pipeSizePos.pipeBottom.pos);
     }
 
-    // Move obstacles to the left at a fixed rate
+    // เคลื่อนย้ายอุปสรรคไปทางซ้ายด้วยอัตราคงที่
     Matter.Body.translate(entities[`ObstacleTop${i}`].body, { x: -0.75, y: 0 });
     Matter.Body.translate(entities[`ObstacleBottom${i}`].body, { x: -0.75, y: 0 });
   }
 
-  // Move the coin to the left and reset its position if it moves out of screen
+  // จัดการกับเหรียญถ้าเหรียญยังไม่ได้ถูกเก็บ
   const coinBody = entities['Coin'].body;
-  if (coinBody.bounds.max.x <= 0) {
-    // Reset coin's position to the center of the screen (x: middle, y: middle)
-    Matter.Body.setPosition(coinBody, { x: windowWidth + getRandom(25, 88), y: getRandom(102, windowHeight - 50) });
-  } else {
-    // Move the coin to the left
-    Matter.Body.translate(coinBody, { x: -0.75, y: 0 });
+  if (coinBody && !entities['Coin'].coinCollected) {
+    if (coinBody.bounds.max.x <= 0) {
+      // รีเซ็ตตำแหน่งเหรียญถ้าเหรียญยังไม่ถูกเก็บแล้วหลุดจากจอ
+      Matter.Body.setPosition(coinBody, { x: windowWidth + getRandom(25, 88), y: getRandom(102, windowHeight - 50) });
+      // console.log("Coin reset");
+    } else {
+      // เคลื่อนย้ายเหรียญไปทางซ้าย
+      Matter.Body.translate(coinBody, { x: -0.75, y: 0 });
+    }
   }
 
   return entities;
 };
 
 export default Physics;
-
