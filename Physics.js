@@ -1,5 +1,6 @@
 import Matter from "matter-js";
 import React from "react";
+import Coin from "./components/Coin";
 import { getPipeSizePosPair, getRandom } from "./utils/random";
 import { Dimensions } from "react-native";
 
@@ -39,7 +40,7 @@ const setupCollisionListener = (engine, dispatch, bearBody, entities) => {
       // หากหมีชนกับสิ่งกีดขวางใดๆ
       if ((bodyA === bearBody && bodyB.label.startsWith('Obstacle')) || 
           (bodyB === bearBody && bodyA.label.startsWith('Obstacle'))) {
-        dispatch({ type: "game-over" });
+        dispatch({ type: "game_over" });
       }
 
       // หากหมีชนกับเหรียญ
@@ -49,21 +50,16 @@ const setupCollisionListener = (engine, dispatch, bearBody, entities) => {
         
         // ลบเหรียญออกจากโลกของ Matter.js
         Matter.World.remove(engine.world, coinBody);
-        dispatch({ type: "coin-collected" });
+        dispatch({ type: "coin_collected" });
 
         entities['Coin'].coinCollected = true; // บันทึกว่าเหรียญถูกเก็บแล้ว
         entities['Coin'].body = null; // ล้างค่า body ของเหรียญออกจาก entities
 
         // สร้างเหรียญใหม่ในตำแหน่งใหม่
         const newCoinPos = { x: windowWidth + getRandom(25, 88), y: getRandom(102, windowHeight - 50) };
-        const newCoin = Matter.Bodies.rectangle(newCoinPos.x, newCoinPos.y, 20, 20, {
-          label: 'Coin',
-          isStatic: true,
-          isSensor: true
-        });
+        const newCoin = Coin(engine.world, 'yellow', newCoinPos, { width: 20, height: 20 })
 
-        Matter.World.add(engine.world, newCoin); // เพิ่มเหรียญใหม่เข้าไปในโลก
-        entities['Coin'].body = newCoin; // อัปเดต body ใหม่เข้าไปใน entities
+        entities['Coin'] = newCoin; // อัปเดต body ใหม่เข้าไปใน entities
         entities['Coin'].coinCollected = false; // รีเซ็ตสถานะการเก็บเหรียญ
         // console.log("Coin reset and created again");
       }
@@ -93,6 +89,12 @@ const Physics = (entities, { touches, time, dispatch }) => {
 
   // จัดการกับอุปสรรค
   for (let i = 1; i <= 2; i++) {
+
+    if(entities[`ObstacleTop${i}`].body.bounds.max.x <= 50 && !entities[`ObstacleTop${i}`].point){
+      entities[`ObstacleTop${i}`].point = true;
+      dispatch({type: 'new_point'});
+    }
+
     if (entities[`ObstacleTop${i}`].body.bounds.max.x <= 0) {
       const pipeSizePos = getPipeSizePosPair(windowWidth * 0.9);
       Matter.Body.setPosition(entities[`ObstacleTop${i}`].body, pipeSizePos.pipeTop.pos);

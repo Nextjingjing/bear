@@ -1,20 +1,32 @@
 import { StatusBar } from 'expo-status-bar';
-import { View, ImageBackground } from 'react-native';
+import { View, ImageBackground, Text } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { GameEngine } from 'react-native-game-engine';
 import entities from './entities';
 import Physics from './Physics';
 
+
 export default function App() {
   const [running, setRunning] = useState(false);
+  const [gameEngine, setGameEngine] = useState(null);
+  const [currentPoint, setCurrentpoint] = useState(0);
 
   useEffect(() => {
     setRunning(true);
   }, []);
 
   const handleEvent = (e) => {
-    if (e.type === 'game-over') {
+    if (e.type === 'game_over') {
       setRunning(false); // Stops the game
+      gameEngine.stop();
+      setCurrentpoint(0);
+    }
+    if(e.type === 'new_point'){
+      setCurrentpoint(currentPoint + 100)
+    }
+
+    if(e.type === 'coin_collected'){
+      setCurrentpoint(currentPoint + 20)
     }
   };
 
@@ -23,7 +35,20 @@ export default function App() {
       source={require('./assets/background.jpg')}
       style={{flex: 1}}
     >
+     <Text style={{
+      position: 'absolute',
+      top: 60,  // ระบุตำแหน่งด้านบนของหน้าจอ
+      left: 0,
+      right: 0,
+      textAlign: 'center',
+      fontSize: 40,
+      margin: 2,
+      zIndex: 1 // ทำให้ Text อยู่ด้านบน
+    }}>
+      {currentPoint} Points
+    </Text>
       <GameEngine
+        ref = {(ref) => setGameEngine(ref)}
         systems={[Physics]}
         entities={entities()}
         running={running}
