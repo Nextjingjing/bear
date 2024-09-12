@@ -55,21 +55,19 @@ export default function App() {
       </Text>
 
       { !running && (
-        <TouchableOpacity
-          onPress={resetGame}
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: [{ translateX: -50 }, { translateY: -50 }],
-            padding: 20,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            borderRadius: 10,
-            zIndex: 2
-          }}
-        >
-          <Text style={{ color: 'white', fontSize: 30, textAlign: 'center' }}>Play Again</Text>
-        </TouchableOpacity>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', zIndex: 3 }}>
+          <TouchableOpacity
+            onPress={resetGame}
+            style={{
+              padding: 20,
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              borderRadius: 10,
+              zIndex: 3
+            }}
+          >
+            <Text style={{ color: 'white', fontSize: 30, textAlign: 'center' }}>Play</Text>
+          </TouchableOpacity>
+        </View>
       )}
 
       <GameEngine
@@ -79,6 +77,7 @@ export default function App() {
         running={running}
         onEvent={handleEvent} // Handle game events like game-over
         style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+        pointerEvents={running ? 'auto' : 'none'} // Allow touches when running, block when not
       >
       </GameEngine>
       <StatusBar style="auto" />
