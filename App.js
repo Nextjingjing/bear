@@ -4,6 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { GameEngine } from 'react-native-game-engine';
 import entities from './entities';
 import Physics from './Physics';
+import { Dimensions } from 'react-native';
+
+const { width, height } = Dimensions.get('window');
 
 
 export default function App() {
@@ -39,7 +42,8 @@ export default function App() {
   return (
     <ImageBackground
       source={require('./assets/background.jpg')}
-      style={{ flex: 1 }}
+      resizeMode="cover"
+      style={{ flex: 1 ,width: width, height: height }}
     >
       <Text style={{
         position: 'absolute',
