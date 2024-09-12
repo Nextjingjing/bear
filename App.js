@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { View, ImageBackground, Text } from 'react-native';
+import { View, ImageBackground, Text, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { GameEngine } from 'react-native-game-engine';
 import entities from './entities';
@@ -21,43 +21,67 @@ export default function App() {
       gameEngine.stop();
       setCurrentpoint(0);
     }
-    if(e.type === 'new_point'){
-      setCurrentpoint(currentPoint + 100)
+    if (e.type === 'new_point') {
+      setCurrentpoint(currentPoint + 100);
     }
 
-    if(e.type === 'coin_collected'){
-      setCurrentpoint(currentPoint + 20)
+    if (e.type === 'coin_collected') {
+      setCurrentpoint(currentPoint + 20);
     }
+  };
+
+  const resetGame = () => {
+    setCurrentpoint(0); // Reset points
+    setRunning(true); // Start the game again
+    gameEngine.swap(entities()); // Reset the entities
   };
 
   return (
     <ImageBackground
       source={require('./assets/background.jpg')}
-      style={{flex: 1}}
+      style={{ flex: 1 }}
     >
-     <Text style={{
-      position: 'absolute',
-      top: 60,  // ระบุตำแหน่งด้านบนของหน้าจอ
-      left: 0,
-      right: 0,
-      textAlign: 'center',
-      fontSize: 40,
-      margin: 2,
-      zIndex: 1 // ทำให้ Text อยู่ด้านบน
-    }}>
-      {currentPoint} Points
-    </Text>
+      <Text style={{
+        position: 'absolute',
+        top: 60,  // ระบุตำแหน่งด้านบนของหน้าจอ
+        left: 0,
+        right: 0,
+        textAlign: 'center',
+        fontSize: 40,
+        margin: 2,
+        zIndex: 1 // ทำให้ Text อยู่ด้านบน
+      }}>
+        {currentPoint} Points
+      </Text>
+
+      { !running && (
+        <TouchableOpacity
+          onPress={resetGame}
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: [{ translateX: -50 }, { translateY: -50 }],
+            padding: 20,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            borderRadius: 10,
+            zIndex: 2
+          }}
+        >
+          <Text style={{ color: 'white', fontSize: 30, textAlign: 'center' }}>Play Again</Text>
+        </TouchableOpacity>
+      )}
+
       <GameEngine
-        ref = {(ref) => setGameEngine(ref)}
+        ref={(ref) => setGameEngine(ref)}
         systems={[Physics]}
         entities={entities()}
         running={running}
         onEvent={handleEvent} // Handle game events like game-over
-        style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0}}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
       >
       </GameEngine>
       <StatusBar style="auto" />
     </ImageBackground>
   );
 }
-

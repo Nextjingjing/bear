@@ -99,6 +99,7 @@ const Physics = (entities, { touches, time, dispatch }) => {
       const pipeSizePos = getPipeSizePosPair(windowWidth * 0.9);
       Matter.Body.setPosition(entities[`ObstacleTop${i}`].body, pipeSizePos.pipeTop.pos);
       Matter.Body.setPosition(entities[`ObstacleBottom${i}`].body, pipeSizePos.pipeBottom.pos);
+      entities[`ObstacleTop${i}`].point = false;
     }
 
     // เคลื่อนย้ายอุปสรรคไปทางซ้ายด้วยอัตราคงที่
