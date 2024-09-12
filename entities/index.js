@@ -26,7 +26,7 @@ export default restart => {
 
     return {
         physics: { engine, world },
-        Bear: Bear(world, 'green', { x: 50, y: 200 }, { width: 50, height: 50 }),
+        Bear: Bear(world, 'green', { x: 50, y: 200 }, { width: 64, height: 64 }),
 
         // Coin ที่อยู่ระหว่างท่อชุดแรกและชุดที่สองในแกน X และ Y
         Coin: Coin(world, 'yellow', { x: coinXPos, y: coinYPos }, { width: 35, height: 35 }),

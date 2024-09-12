@@ -56,7 +56,7 @@ const setupCollisionListener = (engine, dispatch, bearBody, entities) => {
         entities['Coin'].body = null; // ล้างค่า body ของเหรียญออกจาก entities
 
         // สร้างเหรียญใหม่ในตำแหน่งใหม่
-        const newCoinPos = { x: windowWidth + getRandom(25, 88), y: getRandom(102, windowHeight - 50) };
+        const newCoinPos = { x: windowWidth + getRandom(25, 88), y: getRandom(200, windowHeight - 50) };
         const newCoin = Coin(engine.world, 'yellow', newCoinPos, { width: 35, height: 35 })
 
         entities['Coin'] = newCoin; // อัปเดต body ใหม่เข้าไปใน entities
@@ -103,8 +103,8 @@ const Physics = (entities, { touches, time, dispatch }) => {
     }
 
     // เคลื่อนย้ายอุปสรรคไปทางซ้ายด้วยอัตราคงที่
-    Matter.Body.translate(entities[`ObstacleTop${i}`].body, { x: -0.75, y: 0 });
-    Matter.Body.translate(entities[`ObstacleBottom${i}`].body, { x: -0.75, y: 0 });
+    Matter.Body.translate(entities[`ObstacleTop${i}`].body, { x: -1, y: 0 });
+    Matter.Body.translate(entities[`ObstacleBottom${i}`].body, { x: -1, y: 0 });
   }
 
   // จัดการกับเหรียญถ้าเหรียญยังไม่ได้ถูกเก็บ
@@ -116,7 +116,7 @@ const Physics = (entities, { touches, time, dispatch }) => {
       // console.log("Coin reset");
     } else {
       // เคลื่อนย้ายเหรียญไปทางซ้าย
-      Matter.Body.translate(coinBody, { x: -0.75, y: 0 });
+      Matter.Body.translate(coinBody, { x: -1, y: 0 });
     }
   }
 
