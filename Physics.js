@@ -116,7 +116,7 @@ const Physics = (entities, { touches, time, dispatch }) => {
   if (coinBody && !entities['Coin'].coinCollected) {
     if (coinBody.bounds.max.x <= 0) {
       // รีเซ็ตตำแหน่งเหรียญถ้าเหรียญยังไม่ถูกเก็บแล้วหลุดจากจอ
-      Matter.Body.setPosition(coinBody, { x: windowWidth + getRandom(25, 88), y: getRandom(220, windowHeight - 50) });
+      Matter.Body.setPosition(coinBody, { x: windowWidth + getRandom(25, 88), y: getRandom(250, windowHeight - 50) });
       // console.log("Coin reset");
     } else {
       // เคลื่อนย้ายเหรียญไปทางซ้าย
