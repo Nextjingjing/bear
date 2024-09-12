@@ -29,7 +29,7 @@ export default restart => {
         Bear: Bear(world, 'green', { x: 50, y: 200 }, { width: 50, height: 50 }),
 
         // Coin ที่อยู่ระหว่างท่อชุดแรกและชุดที่สองในแกน X และ Y
-        Coin: Coin(world, 'yellow', { x: coinXPos, y: coinYPos }, { width: 20, height: 20 }),
+        Coin: Coin(world, 'yellow', { x: coinXPos, y: coinYPos }, { width: 35, height: 35 }),
 
         ObstacleTop1: Obstacle(world, 'ObstacleTop1', 'red', pipeSizePosA.pipeTop.pos, pipeSizePosA.pipeTop.size),
         ObstacleBottom1: Obstacle(world, 'ObstacleBottom1', 'blue', pipeSizePosA.pipeBottom.pos, pipeSizePosA.pipeBottom.size),

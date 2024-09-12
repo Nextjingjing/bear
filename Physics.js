@@ -57,7 +57,7 @@ const setupCollisionListener = (engine, dispatch, bearBody, entities) => {
 
         // สร้างเหรียญใหม่ในตำแหน่งใหม่
         const newCoinPos = { x: windowWidth + getRandom(25, 88), y: getRandom(102, windowHeight - 50) };
-        const newCoin = Coin(engine.world, 'yellow', newCoinPos, { width: 20, height: 20 })
+        const newCoin = Coin(engine.world, 'yellow', newCoinPos, { width: 35, height: 35 })
 
         entities['Coin'] = newCoin; // อัปเดต body ใหม่เข้าไปใน entities
         entities['Coin'].coinCollected = false; // รีเซ็ตสถานะการเก็บเหรียญ
