@@ -24,8 +24,10 @@ function debounce(func, delay) {
 const adjustGravity = (engine, deltaY) => {
   if (deltaY < 0) {
     engine.gravity.y = -0.35;
+    entities.Bear.flipped = true;  // กลับหมี
   } else if (deltaY > 0) {
     engine.gravity.y = 0.35;
+    entities.Bear.flipped = false; // ไม่กลับหมี
   }
 };
 

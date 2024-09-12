@@ -3,6 +3,7 @@ import { View, Image } from "react-native";
 import Matter from "matter-js";
 
 const Bear = props => {
+    const { flipped } = props;
     const widthBody = props.body.bounds.max.x - props.body.bounds.min.x;
     const heightBody = props.body.bounds.max.y - props.body.bounds.min.y;
 
@@ -18,7 +19,8 @@ const Bear = props => {
                 top: yBody,
                 width: widthBody,
                 height: heightBody,
-                resizeMode: 'contain' // Makes sure the image fits within the dimensions
+                resizeMode: 'contain', // Makes sure the image fits within the dimensions
+                transform: flipped ? [{ rotate: '180deg' }] : [] // กลับหัวเมื่อ flipped เป็น true
             }}
         />
     );
@@ -41,6 +43,7 @@ export default (world, color, pos, size) => {
         body: initialBear,
         color,
         pos,
-        renderer: <Bear />
+        flipped: false,
+        renderer: <Bear /> 
     };
 };
