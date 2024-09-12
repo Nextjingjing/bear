@@ -21,7 +21,7 @@ function debounce(func, delay) {
 }
 
 // ฟังก์ชันที่จะใช้ในการปรับค่า gravity ด้วย debounce
-const adjustGravity = (engine, deltaY) => {
+const adjustGravity = (engine, deltaY, entities) => {
   if (deltaY < 0) {
     engine.gravity.y = -0.35;
     entities.Bear.flipped = true;  // กลับหมี
@@ -30,6 +30,7 @@ const adjustGravity = (engine, deltaY) => {
     entities.Bear.flipped = false; // ไม่กลับหมี
   }
 };
+
 
 const debouncedAdjustGravity = debounce(adjustGravity, 100);
 
@@ -82,8 +83,9 @@ const Physics = (entities, { touches, time, dispatch }) => {
   let move = touches.find(t => t.type === 'move');
   if (move) {
     const deltaY = move.delta.pageY;
-    debouncedAdjustGravity(engine, deltaY);
+    debouncedAdjustGravity(engine, deltaY, entities);
   }
+  
 
   // จำกัดเวลาสูงสุดของ delta ที่ 16.667 ms (เทียบเท่ากับ 60 FPS)
   const maxDelta = 15;
