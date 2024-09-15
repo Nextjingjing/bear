@@ -6,13 +6,7 @@ const HomePage = () => {
 
   return (
     <View style={styles.container}>
-      <Image
-        source={{ uri: 'https://example.com/flappy-bear-logo.png' }} // ใส่โลโก้หรือรูปของ Flappy Bear
-        style={styles.logo}
-      />
       <Text style={styles.title}>Flappy Bear</Text>
-      <Text style={styles.subtitle}>Welcome to the world of Flappy Bear! Tap below to start playing.</Text>
-
       {/* ใช้ TouchableOpacity เพื่อจัดการปุ่ม */}
       <TouchableOpacity
         style={styles.buttonContainer}

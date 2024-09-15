@@ -36,7 +36,7 @@ export default restart => {
 
         ObstacleTop2: Obstacle(world, 'ObstacleTop2', 'red', pipeSizePosB.pipeTop.pos, pipeSizePosB.pipeTop.size),
         ObstacleBottom2: Obstacle(world, 'ObstacleBottom2', 'blue', pipeSizePosB.pipeBottom.pos, pipeSizePosB.pipeBottom.size),
-        Floor: Floor(world, 'green', { x: windowWidth / 2, y: windowHeight }, { width: windowWidth, height: 150 }),
+        Floor: Floor(world, 'green', { x: windowWidth / 2, y: windowHeight }, { width: windowWidth, height: 200 }),
         Ceiling: Floor(world, 'green', { x: windowWidth / 2, y: 0 }, { width: windowWidth, height: 150 })
 
     };
