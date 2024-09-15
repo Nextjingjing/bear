@@ -16,7 +16,7 @@ const HomePage = () => {
       </TouchableOpacity>
       <TouchableOpacity 
       style={styles.buttonContainer}
-      onPress={() => navigation.navigate('totorial')}>
+      onPress={() => navigation.navigate('tutorial')}>
         <Text style = {styles.buttonText}>How to play</Text>
         </TouchableOpacity>
     </View>
@@ -55,6 +55,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 30,
     borderRadius: 10,
+    marginBottom: 20
   },
   buttonText: {
     color: '#fff',
