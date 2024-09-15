@@ -2,17 +2,18 @@ import { StatusBar } from 'expo-status-bar';
 import { View, ImageBackground, Text, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { GameEngine } from 'react-native-game-engine';
-import entities from './entities';
-import Physics from './Physics';
+import entities from '../entities';
+import Physics from '../Physics';
 import { Dimensions } from 'react-native';
+import { useNavigation } from "expo-router";  // ใช้ useNavigation เพื่อสร้างการนำทาง
 
 const { width, height } = Dimensions.get('window');
-
 
 export default function App() {
   const [running, setRunning] = useState(false);
   const [gameEngine, setGameEngine] = useState(null);
   const [currentPoint, setCurrentpoint] = useState(0);
+  const navigation = useNavigation();  // สร้างการนำทาง
 
   useEffect(() => {
     setRunning(true);
@@ -41,7 +42,7 @@ export default function App() {
 
   return (
     <ImageBackground
-      source={require('./assets/background.jpg')}
+      source={require('../assets/background.jpg')}
       resizeMode="cover"
       style={{ flex: 1 ,width: width, height: height }}
     >
@@ -66,10 +67,24 @@ export default function App() {
               padding: 20,
               backgroundColor: 'rgba(0, 0, 0, 0.5)',
               borderRadius: 10,
-              zIndex: 3
+              zIndex: 3,
+              marginBottom: 20, // เพิ่มการเว้นวรรคด้านล่างปุ่ม Play
             }}
           >
             <Text style={{ color: 'white', fontSize: 30, textAlign: 'center' }}>Play</Text>
+          </TouchableOpacity>
+
+          {/* ปุ่มกลับไปหน้าแรก */}
+          <TouchableOpacity
+            onPress={() => navigation.navigate('index')}  // นำทางกลับไปยังหน้า index
+            style={{
+              padding: 15,
+              backgroundColor: 'rgba(255, 0, 0, 0.7)',
+              borderRadius: 10,
+              zIndex: 3,
+            }}
+          >
+            <Text style={{ color: 'white', fontSize: 20, textAlign: 'center' }}>Back to Home</Text>
           </TouchableOpacity>
         </View>
       )}
