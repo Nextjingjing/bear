@@ -14,6 +14,11 @@ const HomePage = () => {
       >
         <Text style={styles.buttonText}>Start Game</Text>
       </TouchableOpacity>
+      <TouchableOpacity 
+      style={styles.buttonContainer}
+      onPress={() => navigation.navigate('totorial')}>
+        <Text style = {styles.buttonText}>How to play</Text>
+        </TouchableOpacity>
     </View>
   );
 };
