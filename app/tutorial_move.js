@@ -9,12 +9,12 @@ const Totorial = () => {
         <View style={styles.container}>
             <Text style={styles.title}>How to play!!</Text>
             <Image 
-                source={require('../assets/up_tutorial.jpg')}  // Adjusted path
+                source={require('../assets/up_tutorial.png')}  // Adjusted path
                 style={styles.logo} 
             />
             <Text style={styles.title}>Swipe up!!</Text>
             <Image 
-                source={require('../assets/down_tutorial.jpg')}  // Adjusted path
+                source={require('../assets/down_tutorial.png')}  // Adjusted path
                 style={styles.logo} 
             />
             <Text style={styles.title}>Swipe Down!!</Text>

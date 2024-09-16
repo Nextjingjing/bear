@@ -8,7 +8,7 @@ const Totorial = () => {
         <View style={styles.container}>
             <Text style={styles.title}>How to play!!</Text>
             <Image 
-                source={require('../assets/dead_tutorial.jpg')}  // Adjusted path
+                source={require('../assets/dead_tutorial.png')}  // Adjusted path
                 style={styles.logo} 
                 />
                 <Text style={styles.title}>Dead!!</Text>
