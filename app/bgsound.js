@@ -1,30 +1,39 @@
-import { useState } from 'react';
+import { useRef } from 'react';
 import { Audio } from 'expo-av';
 
 const useBGsound = () => {
-  const [sound, setSound] = useState(null);
+  const soundRef = useRef(null);  // Use ref to hold the sound object
 
   // Function to play sound
   const playSound = async () => {
-    if (!sound) {
-      console.log('Loading Sound');
-      const { sound } = await Audio.Sound.createAsync(
-        require('../assets/testsong.mp3') // Adjust the path to your song file
-      );
-      setSound(sound);
+    if (!soundRef.current) {
+      console.log('Loading and setting sound...');
+      try {
+        const { sound: newSound } = await Audio.Sound.createAsync(
+          require('../assets/testsong.mp3')  // Adjust the path to your song file
+        );
+        soundRef.current = newSound;  // Store the sound object in the ref
 
-      console.log('Playing Sound');
-      await sound.playAsync();  // Automatically play sound when loaded
-    }
+        await newSound.playAsync();  // Automatically play sound
+        console.log('Sound is now playing.');
+      } catch (error) {
+        console.error('Error loading or playing sound:', error);
+      }
+    } 
   };
 
   // Function to stop sound
   const stopSound = async () => {
-    if (sound) {
-      console.log('Stopping Sound');
-      await sound.stopAsync(); // Stop the sound
-      await sound.unloadAsync(); // Unload the sound from memory
-      setSound(null); // Reset the sound state
+    if (soundRef.current) {
+      console.log('Stopping and unloading sound...');
+      try {
+        await soundRef.current.stopAsync();  // Stop the sound
+        await soundRef.current.unloadAsync();  // Unload the sound from memory
+        soundRef.current = null;  // Reset the ref to null
+        console.log('Sound stopped and unloaded.');
+      } catch (error) {
+        console.error('Error stopping or unloading sound:', error);
+      }
     }
   };
 

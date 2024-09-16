@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";  // Use useNavigation for navigation
 import useBGsound from "./bgsound";  // Import the custom hook
@@ -11,10 +11,10 @@ const HomePage = () => {
   useFocusEffect(
     React.useCallback(() => {
       playSound();  // Start playing the sound when the page is focused
-      console.log('focus')// debug
+
       return () => {
         stopSound();  // Stop the sound when the page is unfocused
-        console.log('unfocus')// debug
+
       };
     }, [])
   );
