@@ -5,8 +5,8 @@ import { GameEngine } from 'react-native-game-engine';
 import entities from '../entities';
 import Physics from '../Physics';
 import { Dimensions } from 'react-native';
-import { useNavigation } from "expo-router";  // ใช้ useNavigation เพื่อสร้างการนำทาง
-
+import { useNavigation,useFocusEffect } from "expo-router";  // ใช้ useNavigation เพื่อสร้างการนำทาง
+import useBGgame from './bggame';
 const { width, height } = Dimensions.get('window');
 
 export default function App() {
@@ -14,7 +14,19 @@ export default function App() {
   const [gameEngine, setGameEngine] = useState(null);
   const [currentPoint, setCurrentpoint] = useState(0);
   const navigation = useNavigation();  // สร้างการนำทาง
+  const { playSound, stopSound } = useBGgame();  // Get the play and stop functions from the hook
 
+  // Start and stop background sound based on page focus
+  useFocusEffect(
+    React.useCallback(() => {
+      playSound();  // Start playing the sound when the page is focused
+
+      return () => {
+        stopSound();  // Stop the sound when the page is unfocused
+
+      };
+    }, [])
+  );
   useEffect(() => {
     setRunning(true);
   }, []);
