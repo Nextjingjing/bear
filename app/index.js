@@ -1,30 +1,45 @@
-import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
-import { useNavigation } from "expo-router";  // ใช้ useNavigation สำหรับการนำทาง
+import React, { useEffect } from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";  // Use useNavigation for navigation
+import useBGsound from "./bgsound";  // Import the custom hook
 
 const HomePage = () => {
-  const navigation = useNavigation();  // เรียกใช้ useNavigation
+  const navigation = useNavigation();  // Call useNavigation
+  const { playSound, stopSound } = useBGsound();  // Get the play and stop functions from the hook
+
+  // Start and stop background sound based on page focus
+  useFocusEffect(
+    React.useCallback(() => {
+      playSound();  // Start playing the sound when the page is focused
+      console.log('focus')// debug
+      return () => {
+        stopSound();  // Stop the sound when the page is unfocused
+        console.log('unfocus')// debug
+      };
+    }, [])
+  );
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Flappy Bear</Text>
-      {/* ใช้ TouchableOpacity เพื่อจัดการปุ่ม */}
+      {/* Use TouchableOpacity for button handling */}
       <TouchableOpacity
         style={styles.buttonContainer}
-        onPress={() => navigation.navigate('game')}  // นำทางไปหน้า 'game'
+        onPress={() => navigation.navigate('game')}  // Navigate to 'game' page
       >
         <Text style={styles.buttonText}>Start Game</Text>
       </TouchableOpacity>
       <TouchableOpacity 
-      style={styles.buttonContainer}
-      onPress={() => navigation.navigate('tutorial_move')}>
-        <Text style = {styles.buttonText}>How to play</Text>
-        </TouchableOpacity>
+        style={styles.buttonContainer}
+        onPress={() => navigation.navigate('tutorial_move')}
+      >
+        <Text style={styles.buttonText}>How to play</Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
 export default HomePage;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -63,4 +78,3 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-
