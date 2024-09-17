@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { Audio } from 'expo-av';
 
-const useBGgame = () => {
+const useBGsound = () => {
   const soundRef = useRef(null);  // Use ref to hold the sound object
 
   // Function to play sound
@@ -13,6 +13,13 @@ const useBGgame = () => {
           require('../assets/testsong2.mp3')  // Adjust the path to your song file
         );
         soundRef.current = newSound;  // Store the sound object in the ref
+        
+        newSound.setOnPlaybackStatusUpdate((status) => {
+          if (status.didJustFinish) {  // If the sound finishes
+
+            newSound.replayAsync();  // Replay the sound when it finishes
+          }
+        });
 
         await newSound.playAsync();  // Automatically play sound
         console.log('Sound is now playing.');
@@ -30,7 +37,7 @@ const useBGgame = () => {
         await soundRef.current.stopAsync();  // Stop the sound
         await soundRef.current.unloadAsync();  // Unload the sound from memory
         soundRef.current = null;  // Reset the ref to null
-        console.log('Sound stopped and unloaded.');
+
       } catch (error) {
         console.error('Error stopping or unloading sound:', error);
       }
@@ -43,4 +50,4 @@ const useBGgame = () => {
   };
 };
 
-export default useBGgame;
+export default useBGsound;

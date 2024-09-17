@@ -14,6 +14,13 @@ const useBGsound = () => {
         );
         soundRef.current = newSound;  // Store the sound object in the ref
 
+        newSound.setOnPlaybackStatusUpdate((status) => {
+          if (status.didJustFinish) {  // If the sound finishes
+
+            newSound.replayAsync();  // Replay the sound when it finishes
+          }
+        });
+
         await newSound.playAsync();  // Automatically play sound
         console.log('Sound is now playing.');
       } catch (error) {
@@ -30,7 +37,7 @@ const useBGsound = () => {
         await soundRef.current.stopAsync();  // Stop the sound
         await soundRef.current.unloadAsync();  // Unload the sound from memory
         soundRef.current = null;  // Reset the ref to null
-        console.log('Sound stopped and unloaded.');
+
       } catch (error) {
         console.error('Error stopping or unloading sound:', error);
       }
