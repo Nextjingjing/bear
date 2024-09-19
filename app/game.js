@@ -7,6 +7,7 @@ import Physics from '../Physics';
 import { Dimensions } from 'react-native';
 import { useNavigation,useFocusEffect } from "expo-router";  // ใช้ useNavigation เพื่อสร้างการนำทาง
 import useBGgame from '../hooks/bggame';
+
 const { width, height } = Dimensions.get('window');
 
 export default function App() {
@@ -60,13 +61,17 @@ export default function App() {
     >
       <Text style={{
         position: 'absolute',
-        top: 60,  // ระบุตำแหน่งด้านบนของหน้าจอ
+        top: 15,  // ระบุตำแหน่งด้านบนของหน้าจอ
         left: 0,
         right: 0,
         textAlign: 'center',
         fontSize: 40,
+        color: 'white',
         margin: 2,
-        zIndex: 1 // ทำให้ Text อยู่ด้านบน
+        zIndex: 1, // ทำให้ Text อยู่ด้านบน
+        textShadowColor: 'black',
+        textShadowRadius: 15,
+        
       }}>
         {currentPoint} Points
       </Text>
