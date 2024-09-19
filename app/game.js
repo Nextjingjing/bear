@@ -7,6 +7,7 @@ import Physics from '../Physics';
 import { Dimensions } from 'react-native';
 import { useNavigation,useFocusEffect } from "expo-router";  // ใช้ useNavigation เพื่อสร้างการนำทาง
 import useBGgame from '../hooks/bggame';
+import usesfx from '../hooks/sfx';
 
 const { width, height } = Dimensions.get('window');
 
@@ -16,6 +17,7 @@ export default function App() {
   const [currentPoint, setCurrentpoint] = useState(0);
   const navigation = useNavigation();  // สร้างการนำทาง
   const { playSound, stopSound } = useBGgame();  // Get the play and stop functions from the hook
+  const { playCoinSound, playDeathSound, playPoleSound } = usesfx();
 
   // Start and stop background sound based on page focus
   useFocusEffect(
@@ -37,13 +39,16 @@ export default function App() {
       setRunning(false); // Stops the game
       gameEngine.stop();
       setCurrentpoint(0);
+      playDeathSound();
     }
     if (e.type === 'new_point') {
       setCurrentpoint(currentPoint + 100);
+      playPoleSound();
     }
 
     if (e.type === 'coin_collected') {
       setCurrentpoint(currentPoint + 20);
+      playCoinSound();
     }
   };
 
