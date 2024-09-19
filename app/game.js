@@ -6,7 +6,7 @@ import entities from '../entities';
 import Physics from '../Physics';
 import { Dimensions } from 'react-native';
 import { useNavigation,useFocusEffect } from "expo-router";  // ใช้ useNavigation เพื่อสร้างการนำทาง
-import useBGgame from '../hook/bggame';
+import useBGgame from '../hooks/bggame';
 const { width, height } = Dimensions.get('window');
 
 export default function App() {

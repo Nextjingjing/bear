@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";  // Use useNavigation for navigation
-import useBGsound from "../hook/bgsound";  // Import the custom hook
+import useBGsound from "../hooks/bgsound";  // Import the custom hook
 
 const HomePage = () => {
   const navigation = useNavigation();  // Call useNavigation
