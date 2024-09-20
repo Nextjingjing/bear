@@ -31,7 +31,7 @@ const HomePage = () => {
       </TouchableOpacity>
       <TouchableOpacity 
         style={styles.buttonContainer}
-        onPress={() => navigation.navigate('tutorial_move')}
+        onPress={() => navigation.navigate('tutorial')}
       >
         <Text style={styles.buttonText}>How to play</Text>
       </TouchableOpacity>

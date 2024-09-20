@@ -1,46 +1,76 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from "expo-router";
+import { useState } from 'react';
 
-const Totorial = () => {
+const Tutorial = () => {
     const navigation = useNavigation(); 
-    const isPreviousDisabled = true; // You can change this based on the state of the tutorial
+    const [step, setStep] = useState(1);  // Step to manage the tutorial flow
+
+    const handleNext = () => {
+        if (step < 3) setStep(step + 1);
+    };
+
+    const handlePrevious = () => {
+        if (step > 1) setStep(step - 1);
+    };
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>How to play!!</Text>
-            <Image 
-                source={require('../assets/up_tutorial.png')}  // Adjusted path
-                style={styles.logo} 
-            />
-            <Text style={styles.title}>Swipe up!!</Text>
-            <Image 
-                source={require('../assets/down_tutorial.png')}  // Adjusted path
-                style={styles.logo} 
-            />
-            <Text style={styles.title}>Swipe Down!!</Text>
+            
+            {step === 1 && (
+                <>
+                    <Image 
+                        source={require('../assets/up_tutorial.png')}  
+                        style={styles.logo} 
+                    />
+                    <Text style={styles.title}>Swipe up!!</Text>
+                    <Image 
+                        source={require('../assets/down_tutorial.png')}  
+                        style={styles.logo} 
+                    />
+                    <Text style={styles.title}>Swipe Down!!</Text>
+                </>
+            )}
+
+            {step === 2 && (
+                <>
+                    <Image 
+                        source={require('../assets/coin_tutorial.jpg')}  
+                        style={styles.logo} 
+                    />
+                    <Text style={styles.title}>Collect Coins!!</Text>
+                </>
+            )}
+
+            {step === 3 && (
+                <>
+                    <Image 
+                        source={require('../assets/dead_tutorial.png')}  
+                        style={styles.logo} 
+                    />
+                    <Text style={styles.title}>Dead!!</Text>
+                </>
+            )}
 
             {/* Row for Next and Previous buttons */}
             <View style={styles.buttonRow}>
-                {/* Disabled Previous Button */}
                 <TouchableOpacity 
-                    style={[
-                        styles.buttonContainer, 
-                        isPreviousDisabled && styles.disabledButton
-                    ]}
-                    disabled={isPreviousDisabled}
-                    
-                >
+                    style={[styles.buttonContainer, step === 1 && styles.disabledButton]}
+                    onPress={handlePrevious}
+                    disabled={step === 1}>
                     <Text style={styles.buttonText}>Previous</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity 
-                    style={styles.buttonContainer}
-                    onPress={() => navigation.navigate('tutorial_coin')}>
+                    style={[styles.buttonContainer, step === 3 && styles.disabledButton]}
+                    onPress={handleNext}
+                    disabled={step === 3}>
                     <Text style={styles.buttonText}>Next</Text>
                 </TouchableOpacity>
             </View>
 
-            {/* Back button placed below the row */}
+            {/* Back button */}
             <View style={styles.backButtonContainer}>
                 <TouchableOpacity 
                     style={styles.backButton}
@@ -52,7 +82,7 @@ const Totorial = () => {
     );
 };
 
-export default Totorial;
+export default Tutorial;
 
 const styles = StyleSheet.create({
     container: {
@@ -84,11 +114,11 @@ const styles = StyleSheet.create({
     buttonRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        width: '80%', // Adjust the width to control button spacing
-        marginBottom: 20, // Adds space between the row and Back button
+        width: '80%',
+        marginBottom: 20,
     },
     backButtonContainer: {
-        alignItems: 'center', // Centers the Back button horizontally
+        alignItems: 'center',
     },
     backButton: {
         backgroundColor: '#f57c00',
