@@ -10,7 +10,7 @@ const useBGtutorial = () => {
       console.log('Loading and setting sound...');
       try {
         const { sound: bgSound } = await Audio.Sound.createAsync(
-          require('../assets/bgtutorial.mp3')  // Adjust the path to your song file
+          require('../assets/BG/bgtutorial.mp3')  // Adjust the path to your song file
         );
         soundRef.current = bgSound;  // Store the sound object in the ref
 

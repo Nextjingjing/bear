@@ -6,11 +6,11 @@ const useBGsound = () => {
 
   // List of songs to choose from (Adjust the paths to your actual song files)
   const songs = [
-    require('../assets/bgsong1.mp3'),
-    require('../assets/bgsong2.mp3'),
-    require('../assets/bgsong3.mp3'),
-    require('../assets/bgsong4.mp3'),
-    require('../assets/bgsong5.mp3'),
+    require('../assets/BG/bgsong1.mp3'),
+    require('../assets/BG/bgsong2.mp3'),
+    require('../assets/BG/bgsong3.mp3'),
+    require('../assets/BG/bgsong4.mp3'),
+    require('../assets/BG/bgsong5.mp3'),
     // Add more songs here...
   ];
 

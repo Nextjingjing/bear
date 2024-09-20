@@ -11,17 +11,17 @@ const useSfx = () => {
     const loadSounds = async () => {
       try {
         const { sound: coin } = await Audio.Sound.createAsync(
-          require('../assets/collectcoin.mp3')
+          require('../assets/SFXgame/collectcoin.mp3')
         );
         coinSound.current = coin;
 
         const { sound: death } = await Audio.Sound.createAsync(
-          require('../assets/dead.mp3')
+          require('../assets/SFXgame/dead.mp3')
         );
         deathSound.current = death;
 
         const { sound: pole } = await Audio.Sound.createAsync(
-          require('../assets/pole.mp3')
+          require('../assets/SFXgame/pole.mp3')
         );
         poleSound.current = pole;
       } catch (error) {
