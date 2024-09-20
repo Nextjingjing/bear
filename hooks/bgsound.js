@@ -9,19 +9,19 @@ const useBGsound = () => {
     if (!soundRef.current) {
       console.log('Loading and setting sound...');
       try {
-        const { sound: newSound } = await Audio.Sound.createAsync(
+        const { sound: bgSound } = await Audio.Sound.createAsync(
           require('../assets/testsong.mp3')  // Adjust the path to your song file
         );
-        soundRef.current = newSound;  // Store the sound object in the ref
+        soundRef.current = bgSound;  // Store the sound object in the ref
 
-        newSound.setOnPlaybackStatusUpdate((status) => {
+        bgSound.setOnPlaybackStatusUpdate((status) => {
           if (status.didJustFinish) {  // If the sound finishes
 
-            newSound.replayAsync();  // Replay the sound when it finishes
+            bgSound.replayAsync();  // Replay the sound when it finishes
           }
         });
 
-        await newSound.playAsync();  // Automatically play sound
+        await bgSound.playAsync();  // Automatically play sound
         console.log('Sound is now playing.');
       } catch (error) {
         console.error('Error loading or playing sound:', error);
