@@ -38,10 +38,19 @@ const useSfx = () => {
     };
   }, []);
 
+  // Function to set volume for a specific sound
+  async function setVolume(soundRef, volume) {
+    if (soundRef.current) {
+      await soundRef.current.setVolumeAsync(volume); // volume is a float between 0.0 and 1.0
+    }
+  }
+
+
   // Function to play and reset the coin sound
   const playCoinSound = async () => {
     if (coinSound.current) {
       await coinSound.current.replayAsync();
+      setVolume(coinsound,0.7)
     }
   };
 
@@ -49,6 +58,7 @@ const useSfx = () => {
   const playDeathSound = async () => {
     if (deathSound.current) {
       await deathSound.current.replayAsync();
+      setVolume(deathSound,0.7)
     }
   };
 
@@ -56,6 +66,7 @@ const useSfx = () => {
   const playPoleSound = async () => {
     if (poleSound.current) {
       await poleSound.current.replayAsync();
+      setVolume(poleSound,0.7)
     }
   };
 
