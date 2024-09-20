@@ -5,7 +5,7 @@ import { GameEngine } from 'react-native-game-engine';
 import entities from '../entities';
 import Physics from '../Physics';
 import { Dimensions } from 'react-native';
-import { useNavigation,useFocusEffect } from "expo-router";  // ใช้ useNavigation เพื่อสร้างการนำทาง
+import { useNavigation, useFocusEffect } from "expo-router";
 import useBGgame from '../hooks/bggame';
 import usesfx from '../hooks/sfx';
 
@@ -15,28 +15,28 @@ export default function App() {
   const [running, setRunning] = useState(false);
   const [gameEngine, setGameEngine] = useState(null);
   const [currentPoint, setCurrentpoint] = useState(0);
-  const navigation = useNavigation();  // สร้างการนำทาง
-  const { playSound, stopSound } = useBGgame();  // Get the play and stop functions from the hook
+  const [route, setRoute] = useState(null); // Track selected route
+  const navigation = useNavigation();
+  const { playSound, stopSound } = useBGgame();
   const { playCoinSound, playDeathSound, playPoleSound } = usesfx();
 
   // Start and stop background sound based on page focus
   useFocusEffect(
     React.useCallback(() => {
-      playSound();  // Start playing the sound when the page is focused
-
+      playSound();
       return () => {
-        stopSound();  // Stop the sound when the page is unfocused
-
+        stopSound();
       };
     }, [])
   );
+
   useEffect(() => {
     setRunning(true);
   }, []);
 
   const handleEvent = (e) => {
     if (e.type === 'game_over') {
-      setRunning(false); // Stops the game
+      setRunning(false);
       gameEngine.stop();
       setCurrentpoint(0);
       playDeathSound();
@@ -53,52 +53,70 @@ export default function App() {
   };
 
   const resetGame = () => {
-    setCurrentpoint(0); // Reset points
-    setRunning(true); // Start the game again
-    gameEngine.swap(entities()); // Reset the entities
+    setCurrentpoint(0);
+    setRunning(true);
+    setRoute(null); // Reset route
+    gameEngine.swap(entities());
+  };
+
+  const chooseRoute = (selectedRoute) => {
+    setRoute(selectedRoute);
+    setRunning(true); // Start the game after route selection
   };
 
   return (
     <ImageBackground
       source={require('../assets/background.jpg')}
       resizeMode="cover"
-      style={{ flex: 1 ,width: width, height: height }}
+      style={{ flex: 1, width: width, height: height }}
     >
       <Text style={{
         position: 'absolute',
-        top: 15,  // ระบุตำแหน่งด้านบนของหน้าจอ
+        top: 15,
         left: 0,
         right: 0,
         textAlign: 'center',
         fontSize: 40,
         color: 'white',
         margin: 2,
-        zIndex: 1, // ทำให้ Text อยู่ด้านบน
+        zIndex: 1,
         textShadowColor: 'black',
         textShadowRadius: 15,
-        
       }}>
         {currentPoint} Points
       </Text>
 
-      { !running && (
+      {!running && !route && (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', zIndex: 3 }}>
+          {/* Route selection */}
+          <Text style={{ color: 'white', fontSize: 20, marginBottom: 20 }}>Choose Your Route</Text>
           <TouchableOpacity
-            onPress={resetGame}
+            onPress={() => chooseRoute('easy')}
             style={{
-              padding: 20,
-              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              padding: 15,
+              backgroundColor: 'rgba(0, 255, 0, 0.7)',
               borderRadius: 10,
               zIndex: 3,
-              marginBottom: 20, // เพิ่มการเว้นวรรคด้านล่างปุ่ม Play
+              marginBottom: 10,
             }}
           >
-            <Text style={{ color: 'white', fontSize: 30, textAlign: 'center' }}>Play</Text>
+            <Text style={{ color: 'white', fontSize: 20, textAlign: 'center' }}>Easy Route</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => chooseRoute('hard')}
+            style={{
+              padding: 15,
+              backgroundColor: 'rgba(255, 0, 0, 0.7)',
+              borderRadius: 10,
+              zIndex: 3,
+              marginBottom: 20,
+            }}
+          >
+            <Text style={{ color: 'white', fontSize: 20, textAlign: 'center' }}>Hard Route</Text>
           </TouchableOpacity>
 
-          {/* ปุ่มกลับไปหน้าแรก */}
           <TouchableOpacity
-            onPress={() => navigation.navigate('index')}  // นำทางกลับไปยังหน้า index
+            onPress={() => navigation.navigate('index')}
             style={{
               padding: 15,
               backgroundColor: 'rgba(255, 0, 0, 0.7)',
@@ -114,11 +132,11 @@ export default function App() {
       <GameEngine
         ref={(ref) => setGameEngine(ref)}
         systems={[Physics]}
-        entities={entities()}
+        entities={entities(route)} // Pass the selected route to entities
         running={running}
-        onEvent={handleEvent} // Handle game events like game-over
+        onEvent={handleEvent}
         style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
-        pointerEvents={running ? 'auto' : 'none'} // Allow touches when running, block when not
+        pointerEvents={running ? 'auto' : 'none'}
       >
       </GameEngine>
       <StatusBar style="auto" />
