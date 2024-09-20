@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { Audio } from 'expo-av';
 
-const useBGsound = () => {
+const useBGtutorial = () => {
   const soundRef = useRef(null);  // Use ref to hold the sound object
 
   // Function to play sound
@@ -10,7 +10,7 @@ const useBGsound = () => {
       console.log('Loading and setting sound...');
       try {
         const { sound: bgSound } = await Audio.Sound.createAsync(
-          require('../assets/bgmain.mp3')  // Adjust the path to your song file
+          require('../assets/bgtutorial.mp3')  // Adjust the path to your song file
         );
         soundRef.current = bgSound;  // Store the sound object in the ref
 
@@ -50,4 +50,4 @@ const useBGsound = () => {
   };
 };
 
-export default useBGsound;
+export default useBGtutorial;

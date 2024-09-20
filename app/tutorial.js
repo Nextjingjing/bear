@@ -1,10 +1,12 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { useNavigation } from "expo-router";
-import { useState } from 'react';
+import { useNavigation,useFocusEffect } from "expo-router";
+import React,{ useState } from 'react';
+import useBGtutorial from '../hooks/bgtutorial';
 
 const Tutorial = () => {
     const navigation = useNavigation(); 
     const [step, setStep] = useState(1);  // Step to manage the tutorial flow
+    const { playSound, stopSound } = useBGtutorial();  // Get the play and stop functions from the hook
 
     const handleNext = () => {
         if (step < 3) setStep(step + 1);
@@ -13,7 +15,18 @@ const Tutorial = () => {
     const handlePrevious = () => {
         if (step > 1) setStep(step - 1);
     };
-
+    // Start and stop background sound based on page focus
+    useFocusEffect(
+        React.useCallback(() => {
+          playSound();  // Start playing the sound when the page is focused
+    
+          return () => {
+            stopSound();  // Stop the sound when the page is unfocused
+    
+          };
+        }, [])
+      );
+    
     return (
         <View style={styles.container}>
             <Text style={styles.title}>How to play!!</Text>
