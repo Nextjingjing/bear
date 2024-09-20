@@ -50,7 +50,7 @@ const useSfx = () => {
   const playCoinSound = async () => {
     if (coinSound.current) {
       await coinSound.current.replayAsync();
-      setVolume(coinsound,0.7)
+      setVolume(coinSound,0.7)
     }
   };
 
