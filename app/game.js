@@ -38,7 +38,6 @@ export default function App() {
     if (e.type === 'game_over') {
       setRunning(false); // Stops the game
       gameEngine.stop();
-      setCurrentpoint(0);
       playDeathSound();
     }
     if (e.type === 'new_point') {
