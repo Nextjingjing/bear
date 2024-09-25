@@ -1,4 +1,4 @@
-import React from "react";
+import React,{ useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";  // Use useNavigation for navigation
 import useBGsound from "../hooks/bgsound";  // Import the custom hook
@@ -6,6 +6,15 @@ import useBGsound from "../hooks/bgsound";  // Import the custom hook
 const HomePage = () => {
   const navigation = useNavigation();  // Call useNavigation
   const { playSound, stopSound } = useBGsound();  // Get the play and stop functions from the hook
+  const [page,setPage] = useState(1); // change page
+
+  const handleNext = () => {
+    setPage(page + 1);
+  };
+
+  const handlePrevious = () => {
+   setPage(page - 1);
+  };
 
   // Start and stop background sound based on page focus
   useFocusEffect(
@@ -21,12 +30,14 @@ const HomePage = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Flappy Bear</Text>
-      {/* Use TouchableOpacity for button handling */}
+      
+      {page === 1 && (<>
+        <Text style={styles.title}>Flappy Bear</Text>
       <TouchableOpacity
         style={styles.buttonContainer}
         onPress={() => navigation.navigate('game')}  // Navigate to 'game' page
       >
+        
         <Text style={styles.buttonText}>Start Game</Text>
       </TouchableOpacity>
       <TouchableOpacity 
@@ -35,6 +46,24 @@ const HomePage = () => {
       >
         <Text style={styles.buttonText}>How to play</Text>
       </TouchableOpacity>
+      <TouchableOpacity 
+      style={styles.buttonContainer}
+      onPress={handleNext}>
+        <Text style={styles.buttonText}>Settings</Text>
+      </TouchableOpacity>
+      
+      </>)}
+      {page === 2 &&(
+        <>
+        <Text style={styles.title}>Settings</Text>
+        <TouchableOpacity 
+      style={styles.buttonContainer}
+      onPress={handlePrevious}>
+        <Text style={styles.buttonText}>Back</Text>
+      </TouchableOpacity>
+        </>
+      )}
+
     </View>
   );
 };
