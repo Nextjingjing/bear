@@ -1,12 +1,19 @@
 import React,{ useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet} from "react-native";
+import Slider from '@react-native-community/slider';
 import { useNavigation, useFocusEffect } from "@react-navigation/native";  // Use useNavigation for navigation
 import useBGsound from "../hooks/bgsound";  // Import the custom hook
 
 const HomePage = () => {
   const navigation = useNavigation();  // Call useNavigation
-  const { playSound, stopSound } = useBGsound();  // Get the play and stop functions from the hook
+  const { playSound, stopSound ,setVolume} = useBGsound();  // Get the play and stop functions from the hook
   const [page,setPage] = useState(1); // change page
+  const [volume, setVolumeState] = useState(1);  // Initial volume is 100%
+
+  const handleVolumeChange = (value) => {
+    setVolumeState(value);  // Update the local state
+    setVolume(value);  // Call the function to change the volume
+  };
 
   const handleNext = () => {
     setPage(page + 1);
@@ -56,6 +63,21 @@ const HomePage = () => {
       {page === 2 &&(
         <>
         <Text style={styles.title}>Settings</Text>
+
+        <Text style={styles.subtitle}>Background Music Volume:</Text>
+      <Slider
+        style={styles.slider}
+        minimumValue={0}
+        maximumValue={1}
+        value={volume}
+        onValueChange={handleVolumeChange}
+        step={0.1}
+        minimumTrackTintColor="#1EB1FC"
+        maximumTrackTintColor="#1EB1FC"
+        thumbTintColor="#1EB1FC"
+      />
+
+
         <TouchableOpacity 
       style={styles.buttonContainer}
       onPress={handlePrevious}>
@@ -105,5 +127,9 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     textAlign: 'center',
+  },
+  slider: {
+    width: 200,
+    height: 40,
   },
 });

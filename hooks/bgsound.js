@@ -43,10 +43,22 @@ const useBGsound = () => {
       }
     }
   };
+    // Function to set volume
+    const setVolume = async (volume) => {
+      if (soundRef.current) {
+        try {
+          await soundRef.current.setVolumeAsync(volume);  // Set volume (0.0 to 1.0)
+        } catch (error) {
+          console.error('Error setting volume:', error);
+        }
+      }
+    };
+  
 
   return {
     playSound,
     stopSound,
+    setVolume,
   };
 };
 
