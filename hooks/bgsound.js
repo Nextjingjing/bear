@@ -1,28 +1,27 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { Audio } from 'expo-av';
 
 const useBGsound = () => {
   const soundRef = useRef(null);  // Use ref to hold the sound object
+  const currentVolume = useRef(1);  // Store current volume in a ref to track it persistently
 
   // Function to play sound
   const playSound = async () => {
     if (!soundRef.current) {
-      console.log('Loading and setting sound...');
       try {
         const { sound: bgSound } = await Audio.Sound.createAsync(
-          require('../assets/BG/bgmain.mp3')  // Adjust the path to your song file
+          require('../assets/BG/bgmain.mp3')
         );
-        soundRef.current = bgSound;  // Store the sound object in the ref
-
+        soundRef.current = bgSound;
         bgSound.setOnPlaybackStatusUpdate((status) => {
-          if (status.didJustFinish) {  // If the sound finishes
-
+          if (status.didJustFinish) {
             bgSound.replayAsync();  // Replay the sound when it finishes
           }
         });
 
-        await bgSound.playAsync();  // Automatically play sound
-        console.log('Sound is now playing.');
+        // Set the initial volume when the sound starts
+        await bgSound.setVolumeAsync(currentVolume.current);
+        await bgSound.playAsync();
       } catch (error) {
         console.error('Error loading or playing sound:', error);
       }
@@ -32,29 +31,29 @@ const useBGsound = () => {
   // Function to stop sound
   const stopSound = async () => {
     if (soundRef.current) {
-      console.log('Stopping and unloading sound...');
       try {
-        await soundRef.current.stopAsync();  // Stop the sound
-        await soundRef.current.unloadAsync();  // Unload the sound from memory
-        soundRef.current = null;  // Reset the ref to null
-
+        await soundRef.current.stopAsync();
+        await soundRef.current.unloadAsync();
+        soundRef.current = null;
       } catch (error) {
         console.error('Error stopping or unloading sound:', error);
       }
     }
   };
-    // Function to set volume
-    const setVolume = async (volume) => {
-      if (soundRef.current) {
-        try {
-          await soundRef.current.setVolumeAsync(volume);  // Set volume (0.0 to 1.0)
-        } catch (error) {
-          console.error('Error setting volume:', error);
-        }
-      }
-    };
-  
 
+  // Function to set volume
+  const setVolume = async (volume) => {
+    currentVolume.current = volume;  // Update the volume ref
+    if (soundRef.current) {
+      try {
+        await soundRef.current.setVolumeAsync(volume);  // Set volume if sound is playing
+      } catch (error) {
+        console.error('Error setting volume:', error);
+      }
+    }
+  };
+
+  // Return the functions to control sound
   return {
     playSound,
     stopSound,

@@ -1,8 +1,9 @@
-import React,{ useState } from "react";
+import React,{ useState,useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet} from "react-native";
 import Slider from '@react-native-community/slider';
 import { useNavigation, useFocusEffect } from "@react-navigation/native";  // Use useNavigation for navigation
 import useBGsound from "../hooks/bgsound";  // Import the custom hook
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomePage = () => {
   const navigation = useNavigation();  // Call useNavigation
@@ -10,9 +11,30 @@ const HomePage = () => {
   const [page,setPage] = useState(1); // change page
   const [volume, setVolumeState] = useState(1);  // Initial volume is 100%
 
-  const handleVolumeChange = (value) => {
+  // Load volume from AsyncStorage when the component mounts
+  useEffect(() => {
+    const loadVolume = async () => {
+      try {
+        const savedVolume = await AsyncStorage.getItem('volume');
+        if (savedVolume !== null) {
+          const volumeValue = parseFloat(savedVolume);
+          setVolumeState(volumeValue);
+          setVolume(volumeValue);
+        }
+      } catch (error) {
+        console.error('Failed to load volume:', error);
+      }
+    };
+    loadVolume();
+  }, []);
+  const handleVolumeChange = async (value) => {
     setVolumeState(value);  // Update the local state
-    setVolume(value);  // Call the function to change the volume
+    setVolume(value);  // Update the sound volume
+    try {
+      await AsyncStorage.setItem('volume', value.toString());  // Save volume to AsyncStorage
+    } catch (error) {
+      console.error('Failed to save volume:', error);
+    }
   };
 
   const handleNext = () => {
@@ -72,8 +94,8 @@ const HomePage = () => {
         value={volume}
         onValueChange={handleVolumeChange}
         step={0.1}
-        minimumTrackTintColor="#1EB1FC"
-        maximumTrackTintColor="#1EB1FC"
+        minimumTrackTintColor="#39da11"
+        maximumTrackTintColor="#ff3600"
         thumbTintColor="#1EB1FC"
       />
 
@@ -130,6 +152,6 @@ const styles = StyleSheet.create({
   },
   slider: {
     width: 200,
-    height: 40,
+    height: 60,
   },
 });
