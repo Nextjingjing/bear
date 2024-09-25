@@ -9,11 +9,11 @@ const Tutorial = () => {
     const { playSound, stopSound } = useBGtutorial();  // Get the play and stop functions from the hook
 
     const handleNext = () => {
-        if (step < 3) setStep(step + 1);
+         setStep(step + 1);
     };
 
     const handlePrevious = () => {
-        if (step > 1) setStep(step - 1);
+        setStep(step - 1);
     };
     // Start and stop background sound based on page focus
     useFocusEffect(
