@@ -10,7 +10,7 @@ const useBGsound = () => {
     if (!soundRef.current) {
       try {
         const { sound: bgSound } = await Audio.Sound.createAsync(
-          require('../assets/BG/bgmain.mp3')
+          require('../assets/backgroundMusics/bgmain.mp3')
         );
         soundRef.current = bgSound;
         bgSound.setOnPlaybackStatusUpdate((status) => {

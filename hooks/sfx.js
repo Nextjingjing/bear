@@ -50,7 +50,7 @@ const useSfx = () => {
   const playCoinSound = async () => {
     if (coinSound.current) {
       await coinSound.current.replayAsync();
-      setVolume(coinSound,0.7)
+      setVolume(coinSound,0.4)
     }
   };
 
@@ -58,7 +58,7 @@ const useSfx = () => {
   const playDeathSound = async () => {
     if (deathSound.current) {
       await deathSound.current.replayAsync();
-      setVolume(deathSound,0.7)
+      setVolume(deathSound,0.4)
     }
   };
 
@@ -66,7 +66,7 @@ const useSfx = () => {
   const playPoleSound = async () => {
     if (poleSound.current) {
       await poleSound.current.replayAsync();
-      setVolume(poleSound,0.7)
+      setVolume(poleSound,0.4)
     }
   };
 

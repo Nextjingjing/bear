@@ -6,9 +6,9 @@ import entities from '../entities';
 import Physics from '../Physics';
 import { Dimensions } from 'react-native';
 import { useNavigation, useFocusEffect } from "expo-router"; 
-import useBGgame from '../hooks/bggame';
 import usesfx from '../hooks/sfx';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // นำเข้า AsyncStorage
+import { SafeAreaView } from 'react-native-safe-area-context'; // นำเข้า SafeAreaView
 
 const { width, height } = Dimensions.get('window');
 
@@ -18,7 +18,6 @@ export default function App() {
   const [currentPoint, setCurrentpoint] = useState(0);
   const [highScore, setHighScore] = useState(0); // เพิ่ม state สำหรับคะแนนสูงสุด
   const navigation = useNavigation();
-  const { playSound, stopSound } = useBGgame();  
   const { playCoinSound, playDeathSound, playPoleSound } = usesfx();
 
   // ฟังก์ชันในการดึงคะแนนสูงสุดจาก AsyncStorage
@@ -42,14 +41,10 @@ export default function App() {
     }
   };
 
-  // Start and stop background sound based on page focus
+  // โหลดคะแนนสูงสุดเมื่อหน้าโฟกัส
   useFocusEffect(
     React.useCallback(() => {
-      playSound();  // Start playing the sound when the page is focused
       loadHighScore(); // โหลดคะแนนสูงสุดเมื่อหน้าถูกโฟกัส
-      return () => {
-        stopSound();  // Stop the sound when the page is unfocused
-      };
     }, [])
   );
 
@@ -87,85 +82,87 @@ export default function App() {
   };
 
   return (
-    <ImageBackground
-      source={require('../assets/background.jpg')}
-      resizeMode="cover"
-      style={{ flex: 1, width: width, height: height }}
-    >
-      {/* แสดงคะแนนปัจจุบัน */}
-      <Text style={{
-        position: 'absolute',
-        top: 15,
-        left: 0,
-        right: 0,
-        textAlign: 'center',
-        fontSize: 40,
-        color: 'white',
-        margin: 2,
-        zIndex: 1,
-        textShadowColor: 'black',
-        textShadowRadius: 15,
-      }}>
-        {currentPoint} Points
-      </Text>
+    <SafeAreaView style={{ flex: 1 }}>
+      <ImageBackground
+        source={require('../assets/background.jpg')}
+        resizeMode="cover"
+        style={{ flex: 1, width: width, height: height }}
+      >
+        {/* แสดงคะแนนปัจจุบัน */}
+        <Text style={{
+          position: 'absolute',
+          top: 15,
+          left: 0,
+          right: 0,
+          textAlign: 'center',
+          fontSize: 40,
+          color: 'white',
+          margin: 2,
+          zIndex: 1,
+          textShadowColor: 'black',
+          textShadowRadius: 15,
+        }}>
+          {currentPoint} Points
+        </Text>
 
-      {/* แสดงคะแนนสูงสุด */}
-      <Text style={{
-        position: 'absolute',
-        top: 60,  // แสดงด้านล่างคะแนนปัจจุบัน
-        left: 0,
-        right: 0,
-        textAlign: 'center',
-        fontSize: 30,
-        color: 'yellow',
-        margin: 2,
-        zIndex: 1,
-        textShadowColor: 'black',
-        textShadowRadius: 15,
-      }}>
-        High Score: {highScore} Points
-      </Text>
+        {/* แสดงคะแนนสูงสุด */}
+        <Text style={{
+          position: 'absolute',
+          bottom: 20,  // แสดงด้านล่างคะแนนปัจจุบัน
+          left: 0,
+          right: 0,
+          textAlign: 'center',
+          fontSize: 30,
+          color: 'white',
+          margin: 2,
+          zIndex: 1,
+          textShadowColor: 'black',
+          textShadowRadius: 15,
+        }}>
+          High Score: {highScore} Points
+        </Text>
 
-      { !running && (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', zIndex: 3 }}>
-          <TouchableOpacity
-            onPress={resetGame}
-            style={{
-              padding: 20,
-              backgroundColor: 'rgba(0, 0, 0, 0.5)',
-              borderRadius: 10,
-              zIndex: 3,
-              marginBottom: 20,
-            }}
-          >
-            <Text style={{ color: 'white', fontSize: 30, textAlign: 'center' }}>Play</Text>
-          </TouchableOpacity>
+        { !running && (
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', zIndex: 3 }}>
+            <TouchableOpacity
+              onPress={resetGame}
+              style={{
+                padding: 20,
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                borderRadius: 10,
+                zIndex: 3,
+                marginBottom: 20,
+              }}
+            >
+              <Text style={{ color: 'white', fontSize: 30, textAlign: 'center' }}>Play</Text>
+            </TouchableOpacity>
 
-          {/* ปุ่มกลับไปหน้าแรก */}
-          <TouchableOpacity
-            onPress={() => navigation.navigate('index')}
-            style={{
-              padding: 15,
-              backgroundColor: 'rgba(255, 0, 0, 0.7)',
-              borderRadius: 10,
-              zIndex: 3,
-            }}
-          >
-            <Text style={{ color: 'white', fontSize: 20, textAlign: 'center' }}>Back to Home</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+            {/* ปุ่มกลับไปหน้าแรก */}
+            <TouchableOpacity
+              onPress={() => navigation.navigate('index')}
+              style={{
+                padding: 15,
+                backgroundColor: 'rgba(255, 0, 0, 0.7)',
+                borderRadius: 10,
+                zIndex: 3,
+              }}
+            >
+              <Text style={{ color: 'white', fontSize: 20, textAlign: 'center' }}>Back to Home</Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
-      <GameEngine
-        ref={(ref) => setGameEngine(ref)}
-        systems={[Physics]}
-        entities={entities()}
-        running={running}
-        onEvent={handleEvent}
-        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
-        pointerEvents={running ? 'auto' : 'none'}
-      />
-      <StatusBar style="auto" />
-    </ImageBackground>
+        <GameEngine
+          ref={(ref) => setGameEngine(ref)}
+          systems={[Physics]}
+          entities={entities()}
+          running={running}
+          onEvent={handleEvent}
+          style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+          pointerEvents={running ? 'auto' : 'none'}
+        />
+        <StatusBar style="auto" />
+      </ImageBackground>
+    </SafeAreaView>
   );
 }
