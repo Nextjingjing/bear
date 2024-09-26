@@ -5,9 +5,10 @@ import { GameEngine } from 'react-native-game-engine';
 import entities from '../entities';
 import Physics from '../Physics';
 import { Dimensions } from 'react-native';
-import { useNavigation,useFocusEffect } from "expo-router";  // ใช้ useNavigation เพื่อสร้างการนำทาง
+import { useNavigation, useFocusEffect } from "expo-router"; 
 import useBGgame from '../hooks/bggame';
 import usesfx from '../hooks/sfx';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // นำเข้า AsyncStorage
 
 const { width, height } = Dimensions.get('window');
 
@@ -15,21 +16,43 @@ export default function App() {
   const [running, setRunning] = useState(false);
   const [gameEngine, setGameEngine] = useState(null);
   const [currentPoint, setCurrentpoint] = useState(0);
-  const navigation = useNavigation();  // สร้างการนำทาง
-  const { playSound, stopSound } = useBGgame();  // Get the play and stop functions from the hook
+  const [highScore, setHighScore] = useState(0); // เพิ่ม state สำหรับคะแนนสูงสุด
+  const navigation = useNavigation();
+  const { playSound, stopSound } = useBGgame();  
   const { playCoinSound, playDeathSound, playPoleSound } = usesfx();
+
+  // ฟังก์ชันในการดึงคะแนนสูงสุดจาก AsyncStorage
+  const loadHighScore = async () => {
+    try {
+      const storedHighScore = await AsyncStorage.getItem('highScore');
+      if (storedHighScore !== null) {
+        setHighScore(parseInt(storedHighScore)); // ตั้งค่าคะแนนสูงสุดที่เก็บไว้
+      }
+    } catch (error) {
+      console.error('Error loading high score:', error);
+    }
+  };
+
+  // ฟังก์ชันในการบันทึกคะแนนสูงสุด
+  const saveHighScore = async (score) => {
+    try {
+      await AsyncStorage.setItem('highScore', score.toString());
+    } catch (error) {
+      console.error('Error saving high score:', error);
+    }
+  };
 
   // Start and stop background sound based on page focus
   useFocusEffect(
     React.useCallback(() => {
       playSound();  // Start playing the sound when the page is focused
-
+      loadHighScore(); // โหลดคะแนนสูงสุดเมื่อหน้าถูกโฟกัส
       return () => {
         stopSound();  // Stop the sound when the page is unfocused
-
       };
     }, [])
   );
+
   useEffect(() => {
     setRunning(true);
   }, []);
@@ -39,6 +62,12 @@ export default function App() {
       setRunning(false); // Stops the game
       gameEngine.stop();
       playDeathSound();
+
+      // ตรวจสอบคะแนนปัจจุบันและคะแนนสูงสุด
+      if (currentPoint > highScore) {
+        setHighScore(currentPoint); // ตั้งค่าคะแนนสูงสุดใหม่
+        saveHighScore(currentPoint); // บันทึกคะแนนสูงสุดใหม่ใน AsyncStorage
+      }
     }
     if (e.type === 'new_point') {
       setCurrentpoint(currentPoint + 100);
@@ -61,23 +90,40 @@ export default function App() {
     <ImageBackground
       source={require('../assets/background.jpg')}
       resizeMode="cover"
-      style={{ flex: 1 ,width: width, height: height }}
+      style={{ flex: 1, width: width, height: height }}
     >
+      {/* แสดงคะแนนปัจจุบัน */}
       <Text style={{
         position: 'absolute',
-        top: 15,  // ระบุตำแหน่งด้านบนของหน้าจอ
+        top: 15,
         left: 0,
         right: 0,
         textAlign: 'center',
         fontSize: 40,
         color: 'white',
         margin: 2,
-        zIndex: 1, // ทำให้ Text อยู่ด้านบน
+        zIndex: 1,
         textShadowColor: 'black',
         textShadowRadius: 15,
-        
       }}>
         {currentPoint} Points
+      </Text>
+
+      {/* แสดงคะแนนสูงสุด */}
+      <Text style={{
+        position: 'absolute',
+        top: 60,  // แสดงด้านล่างคะแนนปัจจุบัน
+        left: 0,
+        right: 0,
+        textAlign: 'center',
+        fontSize: 30,
+        color: 'yellow',
+        margin: 2,
+        zIndex: 1,
+        textShadowColor: 'black',
+        textShadowRadius: 15,
+      }}>
+        High Score: {highScore} Points
       </Text>
 
       { !running && (
@@ -89,7 +135,7 @@ export default function App() {
               backgroundColor: 'rgba(0, 0, 0, 0.5)',
               borderRadius: 10,
               zIndex: 3,
-              marginBottom: 20, // เพิ่มการเว้นวรรคด้านล่างปุ่ม Play
+              marginBottom: 20,
             }}
           >
             <Text style={{ color: 'white', fontSize: 30, textAlign: 'center' }}>Play</Text>
@@ -97,7 +143,7 @@ export default function App() {
 
           {/* ปุ่มกลับไปหน้าแรก */}
           <TouchableOpacity
-            onPress={() => navigation.navigate('index')}  // นำทางกลับไปยังหน้า index
+            onPress={() => navigation.navigate('index')}
             style={{
               padding: 15,
               backgroundColor: 'rgba(255, 0, 0, 0.7)',
@@ -115,11 +161,10 @@ export default function App() {
         systems={[Physics]}
         entities={entities()}
         running={running}
-        onEvent={handleEvent} // Handle game events like game-over
+        onEvent={handleEvent}
         style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
-        pointerEvents={running ? 'auto' : 'none'} // Allow touches when running, block when not
-      >
-      </GameEngine>
+        pointerEvents={running ? 'auto' : 'none'}
+      />
       <StatusBar style="auto" />
     </ImageBackground>
   );
