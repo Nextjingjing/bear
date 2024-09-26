@@ -9,16 +9,13 @@ import {
   Dimensions 
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Font from 'expo-font';  // Import expo-font
 
 const { width, height } = Dimensions.get('window');
 
 const HomePage = () => {
   const navigation = useNavigation();
-  const [page, setPage] = useState(1);
   const [fontsLoaded, setFontsLoaded] = useState(false); // Track font loading
 
   // Load volume from AsyncStorage and custom font
@@ -63,6 +60,12 @@ const HomePage = () => {
           onPress={() => navigation.navigate('tutorial')}
         >
           <Text style={styles.buttonText}>How to play</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.buttonContainer}
+          onPress={() => navigation.navigate('settings')}
+        >
+          <Text style={styles.buttonText}>Settings</Text>
         </TouchableOpacity>
       </View>
       <StatusBar style="auto" />
