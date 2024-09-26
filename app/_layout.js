@@ -40,6 +40,7 @@ const RootLayout = () => {
         <Stack>
             <Stack.Screen name="index" options={{ headerShown: false }}/>
             <Stack.Screen name="game" options={{ headerShown: false }}/>
+            <Stack.Screen name="tutorial" options={{ headerShown: false }}/>
         </Stack>
     );
 };
