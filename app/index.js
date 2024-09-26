@@ -1,14 +1,26 @@
-import React,{ useState,useEffect } from "react";
-import { View, Text, TouchableOpacity, StyleSheet} from "react-native";
+import React, { useState, useEffect } from "react";
+import { 
+  View, 
+  Text, 
+  TouchableOpacity, 
+  StyleSheet, 
+  Image, 
+  ImageBackground, 
+  Dimensions 
+} from "react-native";
 import Slider from '@react-native-community/slider';
 import { useNavigation, useFocusEffect } from "@react-navigation/native";  // Use useNavigation for navigation
 import useBGsound from "../hooks/bgsound";  // Import the custom hook
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StatusBar } from 'expo-status-bar';  // Ensure you're using expo-status-bar
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+const { width, height } = Dimensions.get('window');
 
 const HomePage = () => {
   const navigation = useNavigation();  // Call useNavigation
-  const { playSound, stopSound ,setVolume} = useBGsound();  // Get the play and stop functions from the hook
-  const [page,setPage] = useState(1); // change page
+  const { playSound, stopSound, setVolume } = useBGsound();  // Get the play and stop functions from the hook
+  const [page, setPage] = useState(1); // change page
   const [volume, setVolumeState] = useState(1);  // Initial volume is 100%
 
   // Load volume from AsyncStorage when the component mounts
@@ -27,6 +39,7 @@ const HomePage = () => {
     };
     loadVolume();
   }, []);
+
   const handleVolumeChange = async (value) => {
     setVolumeState(value);  // Update the local state
     setVolume(value);  // Update the sound volume
@@ -42,7 +55,7 @@ const HomePage = () => {
   };
 
   const handlePrevious = () => {
-   setPage(page - 1);
+    setPage(page - 1);
   };
 
   // Start and stop background sound based on page focus
@@ -52,73 +65,95 @@ const HomePage = () => {
 
       return () => {
         stopSound();  // Stop the sound when the page is unfocused
-
       };
     }, [])
   );
 
   return (
-    <View style={styles.container}>
-      
-      {page === 1 && (<>
-        <Text style={styles.title}>Flappy Bear</Text>
-      <TouchableOpacity
-        style={styles.buttonContainer}
-        onPress={() => navigation.navigate('game')}  // Navigate to 'game' page
+
+      <ImageBackground
+        source={require('../assets/background.jpg')}
+        resizeMode="cover"
+        style={styles.background}
       >
-        
-        <Text style={styles.buttonText}>Start Game</Text>
-      </TouchableOpacity>
-      <TouchableOpacity 
-        style={styles.buttonContainer}
-        onPress={() => navigation.navigate('tutorial')}
-      >
-        <Text style={styles.buttonText}>How to play</Text>
-      </TouchableOpacity>
-      <TouchableOpacity 
-      style={styles.buttonContainer}
-      onPress={handleNext}>
-        <Text style={styles.buttonText}>Settings</Text>
-      </TouchableOpacity>
-      
-      </>)}
-      {page === 2 &&(
-        <>
-        <Text style={styles.title}>Settings</Text>
+        <View style={styles.container}>
+          <Image source={require('../assets/logo.png')} style={styles.logo} />
 
-        <Text style={styles.subtitle}>Background Music Volume:</Text>
-      <Slider
-        style={styles.slider}
-        minimumValue={0}
-        maximumValue={1}
-        value={volume}
-        onValueChange={handleVolumeChange}
-        step={0.1}
-        minimumTrackTintColor="#39da11"
-        maximumTrackTintColor="#ff3600"
-        thumbTintColor="#1EB1FC"
-      />
+          {page === 1 && (
+            <>
+              <Text style={styles.title}>Flappy Bear</Text>
+              <TouchableOpacity
+                style={styles.buttonContainer}
+                onPress={() => navigation.navigate('game')}  // Navigate to 'game' page
+              >
+                <Text style={styles.buttonText}>Start Game</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.buttonContainer}
+                onPress={() => navigation.navigate('tutorial')}
+              >
+                <Text style={styles.buttonText}>How to play</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.buttonContainer}
+                onPress={handleNext}
+              >
+                <Text style={styles.buttonText}>Settings</Text>
+              </TouchableOpacity>
+            </>
+          )}
 
+          {page === 2 && (
+            <>
+              <Text style={styles.title}>Settings</Text>
 
-        <TouchableOpacity 
-      style={styles.buttonContainer}
-      onPress={handlePrevious}>
-        <Text style={styles.buttonText}>Back</Text>
-      </TouchableOpacity>
-        </>
-      )}
+              <Text style={styles.subtitle}>Background Music Volume:</Text>
+              <Slider
+                style={styles.slider}
+                minimumValue={0}
+                maximumValue={1}
+                value={volume}
+                onValueChange={handleVolumeChange}
+                step={0.1}
+                minimumTrackTintColor="#39da11"
+                maximumTrackTintColor="#ff3600"
+                thumbTintColor="#1EB1FC"
+              />
 
-    </View>
+              <TouchableOpacity 
+                style={styles.buttonContainer}
+                onPress={handlePrevious}
+              >
+                <Text style={styles.buttonText}>Back</Text>
+              </TouchableOpacity>
+            </>
+          )}
+        </View>
+        <StatusBar style="auto" />
+      </ImageBackground>
+
   );
 };
 
 export default HomePage;
+
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#87CEEB',  // Ensure this matches the StatusBar background
+  },
+  background: {
+    flex: 1,
+    width: width,
+    height: height,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#87CEEB',
+    // Removed backgroundColor since ImageBackground is handling it
   },
   logo: {
     width: 150,
@@ -130,6 +165,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
     marginBottom: 10,
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
@@ -139,6 +175,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   buttonContainer: {
+    width: 200,
     backgroundColor: '#f57c00',
     paddingVertical: 15,
     paddingHorizontal: 30,
