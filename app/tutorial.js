@@ -99,7 +99,6 @@ export default Tutorial;
 
 const styles = StyleSheet.create({
     container: {
-        height: 50,
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
