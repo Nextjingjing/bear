@@ -3,72 +3,10 @@ import { useNavigation,useFocusEffect } from "expo-router";
 import React,{ useState } from 'react';
 
 const Tutorial = () => {
-    const navigation = useNavigation(); 
-    const [step, setStep] = useState(1);  // Step to manage the tutorial flow
-
-    const handleNext = () => {
-         setStep(step + 1);
-    };
-
-    const handlePrevious = () => {
-        setStep(step - 1);
-    };
+    const navigation = useNavigation();
     
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>How to play!!</Text>
-            
-            {step === 1 && (
-                <>
-                    <Image 
-                        source={require('../assets/up_tutorial.png')}  
-                        style={styles.logo} 
-                    />
-                    <Text style={styles.title}>Swipe up!!</Text>
-                    <Image 
-                        source={require('../assets/down_tutorial.png')}  
-                        style={styles.logo} 
-                    />
-                    <Text style={styles.title}>Swipe Down!!</Text>
-                </>
-            )}
-
-            {step === 2 && (
-                <>
-                    <Image 
-                        source={require('../assets/coin_tutorial.jpg')}  
-                        style={styles.logo} 
-                    />
-                    <Text style={styles.title}>Collect Coins!!</Text>
-                </>
-            )}
-
-            {step === 3 && (
-                <>
-                    <Image 
-                        source={require('../assets/dead_tutorial.png')}  
-                        style={styles.logo} 
-                    />
-                    <Text style={styles.title}>Dead!!</Text>
-                </>
-            )}
-
-            {/* Row for Next and Previous buttons */}
-            <View style={styles.buttonRow}>
-                <TouchableOpacity 
-                    style={[styles.buttonContainer, step === 1 && styles.disabledButton]}
-                    onPress={handlePrevious}
-                    disabled={step === 1}>
-                    <Text style={styles.buttonText}>Previous</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity 
-                    style={[styles.buttonContainer, step === 3 && styles.disabledButton]}
-                    onPress={handleNext}
-                    disabled={step === 3}>
-                    <Text style={styles.buttonText}>Next</Text>
-                </TouchableOpacity>
-            </View>
 
             {/* Back button */}
             <View style={styles.backButtonContainer}>
