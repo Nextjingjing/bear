@@ -64,6 +64,12 @@ const HomePage = () => {
         >
           <Text style={styles.buttonText}>How to play</Text>
         </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.buttonContainer}
+          onPress={() => navigation.navigate('credit')}
+        >
+          <Text style={styles.buttonText}>Credit</Text>
+        </TouchableOpacity>
       </View>
       <StatusBar style="auto" />
     </ImageBackground>
