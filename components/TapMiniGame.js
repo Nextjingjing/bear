@@ -9,6 +9,7 @@ import {
   Dimensions,
   Animated,
 } from 'react-native';
+import useSfx from '../hooks/sfx'; // นำเข้า useSfx จากโฟลเดอร์ hooks
 
 // Get screen dimensions
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -19,6 +20,9 @@ const BUTTON_SIZE = 80;
 const TapMiniGame = ({ onEnd }) => {
   const [taps, setTaps] = useState(0);
   const [timeLeft, setTimeLeft] = useState(5); // 5-second timer
+
+  // ใช้ฮุก useSfx
+  const { playCoinSound } = useSfx();
 
   // Animated values for button position
   const buttonPosition = useRef(new Animated.ValueXY()).current;
@@ -95,9 +99,10 @@ const TapMiniGame = ({ onEnd }) => {
           <Animated.View style={[styles.animatedButtonContainer, buttonPosition.getLayout()]}>
             <TouchableOpacity
               style={styles.tapButton}
-              onPress={() => {
+              onPress={async () => {
                 setTaps(prevTaps => prevTaps + 1);
                 moveButton(); // Optionally move button on tap
+                await playCoinSound(); // เล่นเสียงเหรียญเมื่อกดปุ่ม
               }}
             >
               <Text style={styles.buttonText}>Tap!</Text>
