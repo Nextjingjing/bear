@@ -1,11 +1,69 @@
 // components/TapMiniGame.js
 
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+  Animated,
+} from 'react-native';
+
+// Get screen dimensions
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+
+// Define button size
+const BUTTON_SIZE = 80;
 
 const TapMiniGame = ({ onEnd }) => {
   const [taps, setTaps] = useState(0);
   const [timeLeft, setTimeLeft] = useState(5); // 5-second timer
+
+  // Animated values for button position
+  const buttonPosition = useRef(new Animated.ValueXY()).current;
+
+  // Reference to the position updating interval
+  const positionInterval = useRef(null);
+
+  // Function to generate a random position within screen bounds
+  const getRandomPosition = () => {
+    const maxX = SCREEN_WIDTH - BUTTON_SIZE - 20; // 20 for padding
+    const maxY = SCREEN_HEIGHT - BUTTON_SIZE - 100; // 100 for top elements
+    const minX = 20;
+    const minY = 100;
+
+    const randomX = Math.floor(Math.random() * (maxX - minX + 1)) + minX;
+    const randomY = Math.floor(Math.random() * (maxY - minY + 1)) + minY;
+
+    return { x: randomX, y: randomY };
+  };
+
+  // Function to animate the button to a new position
+  const moveButton = () => {
+    const newPos = getRandomPosition();
+    Animated.spring(buttonPosition, {
+      toValue: newPos,
+      useNativeDriver: false,
+      friction: 8,
+      tension: 50,
+    }).start();
+  };
+
+  useEffect(() => {
+    // Initialize button position
+    moveButton();
+
+    // Set interval to move button every second
+    positionInterval.current = setInterval(moveButton, 1000);
+
+    return () => {
+      // Clean up interval on unmount
+      if (positionInterval.current) {
+        clearInterval(positionInterval.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (timeLeft > 0) {
@@ -13,34 +71,45 @@ const TapMiniGame = ({ onEnd }) => {
       return () => clearTimeout(timer);
     } else {
       // Mini-game ends, calculate score and notify parent
-      const score = taps * 5; // 5 points per tap
+      const score = taps * 10; // 10 points per tap
       if (typeof onEnd === 'function') {
         onEnd(score);
       } else {
         console.error('onEnd prop is not a function');
       }
+
+      // Clear the position interval when game ends
+      if (positionInterval.current) {
+        clearInterval(positionInterval.current);
+      }
     }
-  }, [timeLeft, onEnd]);
+  }, [timeLeft, onEnd, taps]);
 
   return (
     <View style={styles.container}>
       {timeLeft > 0 ? (
         <>
           <Text style={styles.instructionsText}>
-            Tap as much as you can in {timeLeft} seconds!
+            Tap as much as you can!
           </Text>
-          <TouchableOpacity
-            style={styles.tapButton}
-            onPress={() => setTaps(prevTaps => prevTaps + 1)}
-          >
-            <Text style={styles.buttonText}>Tap!</Text>
-          </TouchableOpacity>
+          <Animated.View style={[styles.animatedButtonContainer, buttonPosition.getLayout()]}>
+            <TouchableOpacity
+              style={styles.tapButton}
+              onPress={() => {
+                setTaps(prevTaps => prevTaps + 1);
+                moveButton(); // Optionally move button on tap
+              }}
+            >
+              <Text style={styles.buttonText}>Tap!</Text>
+            </TouchableOpacity>
+          </Animated.View>
           <Text style={styles.tapCountText}>Taps: {taps}</Text>
         </>
       ) : (
         <>
           <Text style={styles.timerText}>Time's up!</Text>
           <Text style={styles.tapText}>Total Taps: {taps}</Text>
+          <Text style={styles.scoreText}>Score: {taps * 10}</Text>
         </>
       )}
     </View>
@@ -49,45 +118,64 @@ const TapMiniGame = ({ onEnd }) => {
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    ...StyleSheet.absoluteFill, // Ensures the container covers the entire screen
+    backgroundColor: 'rgba(30, 30, 30, 0.95)',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 5,
+    zIndex: 100, // Increased zIndex to ensure it's on top
+    padding: 20,
   },
   instructionsText: {
-    fontSize: 28,
-    color: 'white',
+    fontSize: 24,
+    color: '#FFD700',
     marginBottom: 20,
     textAlign: 'center',
+    fontWeight: 'bold',
   },
   timerText: {
-    fontSize: 30,
-    color: 'white',
+    fontSize: 32,
+    color: '#FF4500',
     marginBottom: 10,
+    fontWeight: 'bold',
   },
   tapText: {
-    fontSize: 24,
-    color: 'white',
-    marginBottom: 20,
+    fontSize: 26,
+    color: '#FFFFFF',
+    marginBottom: 10,
+  },
+  scoreText: {
+    fontSize: 28,
+    color: '#00FF7F',
+    marginTop: 10,
+    fontWeight: 'bold',
   },
   tapButton: {
-    padding: 20,
-    backgroundColor: 'blue',
-    borderRadius: 10,
-    marginBottom: 20,
+    width: BUTTON_SIZE,
+    height: BUTTON_SIZE,
+    borderRadius: BUTTON_SIZE / 2,
+    backgroundColor: '#1E90FF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 10, // Increased elevation for Android to make it more prominent
+    shadowColor: '#000', // Adds shadow for iOS
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 5,
+    zIndex: 101, // Ensures the button is above other elements
   },
   buttonText: {
-    color: 'white',
-    fontSize: 24,
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: 'bold',
   },
   tapCountText: {
-    fontSize: 20,
-    color: 'white',
+    fontSize: 22,
+    color: '#FFFFFF',
+    marginTop: 10,
+  },
+  animatedButtonContainer: {
+    position: 'absolute',
+    zIndex: 101, // Ensures the button container is above other elements
   },
 });
 
