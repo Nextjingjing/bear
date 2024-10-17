@@ -97,20 +97,20 @@ const styles = StyleSheet.create({
   creditText: {
     fontSize: 18,
     fontFamily: 'CustomFont-Regular',
-    color: '#fff',
+    color: 'black',
     marginBottom: 5,
   },
   nameText: {
     fontSize: 22,
     fontWeight: 'bold',
     fontFamily: 'CustomFont-Regular',
-    color: '#fff',
+    color: '#FF8800',
     marginBottom: 5,
   },
   roleText: {
     fontSize: 18,
     fontFamily: 'CustomFont-Regular',
-    color: '#aaa',
+    color: 'black',
   },
   buttonContainer: {
     width: 150,
