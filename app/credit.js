@@ -30,7 +30,7 @@ const CreditsPage = () => {
             <View style={styles.creditItem}>
               <Text style={styles.creditText}>ID: 6601012610083</Text>
               <Text style={styles.nameText}>Pruek Tanvorakul</Text>
-              <Text style={styles.roleText}>Art Assets & Game Design</Text>
+              <Text style={styles.roleText}>Art Assets & Game Design & Gameplay</Text>
             </View>
 
             <View style={styles.creditItem}>
