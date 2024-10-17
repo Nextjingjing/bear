@@ -17,6 +17,9 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 // Define button size
 const BUTTON_SIZE = 80;
 
+// Define maximum taps
+const MAX_TAPS = 44;
+
 const TapMiniGame = ({ onEnd }) => {
   const [taps, setTaps] = useState(0);
   const [timeLeft, setTimeLeft] = useState(5); // 5-second timer
@@ -29,6 +32,14 @@ const TapMiniGame = ({ onEnd }) => {
 
   // Reference to the position updating interval
   const positionInterval = useRef(null);
+
+  // Reference to taps for synchronous access
+  const tapsRef = useRef(taps);
+
+  // Update tapsRef whenever taps state changes
+  useEffect(() => {
+    tapsRef.current = taps;
+  }, [taps]);
 
   // Function to generate a random position within screen bounds
   const getRandomPosition = () => {
@@ -100,9 +111,11 @@ const TapMiniGame = ({ onEnd }) => {
             <TouchableOpacity
               style={styles.tapButton}
               onPress={async () => {
-                setTaps(prevTaps => prevTaps + 1);
-                moveButton(); // Optionally move button on tap
-                await playCoinSound(); // เล่นเสียงเหรียญเมื่อกดปุ่ม
+                if (tapsRef.current < MAX_TAPS) {
+                  setTaps(prevTaps => prevTaps + 1);
+                  await playCoinSound(); // เล่นเสียงเหรียญเมื่อกดปุ่ม
+                }
+                moveButton(); // เลื่อนปุ่มไม่ว่าจะกดได้หรือไม่
               }}
             >
               <Text style={styles.buttonText}>Tap!</Text>
