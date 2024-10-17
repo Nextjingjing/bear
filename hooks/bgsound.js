@@ -5,17 +5,33 @@ const useBGsound = () => {
   const soundRef = useRef(null);  // Use ref to hold the sound object
   const currentVolume = useRef(1);  // Store current volume in a ref to track it persistently
 
+  // Array of music files
+  const musicFiles = [
+    require('../assets/backgroundMusics/bgmain1.mp3'),
+    require('../assets/backgroundMusics/bgmain2.mp3'),
+    require('../assets/backgroundMusics/bgmain3.mp3'),
+    // Add more music files as needed
+  ];
+
+  // Function to get a random music file
+  const getRandomMusicFile = () => {
+    const randomIndex = Math.floor(Math.random() * musicFiles.length);
+    return musicFiles[randomIndex];
+  };
+
   // Function to play sound
   const playSound = async () => {
     if (!soundRef.current) {
       try {
         const { sound: bgSound } = await Audio.Sound.createAsync(
-          require('../assets/backgroundMusics/bgmain.mp3')
+          getRandomMusicFile()  // Get a random music file
         );
         soundRef.current = bgSound;
         bgSound.setOnPlaybackStatusUpdate((status) => {
           if (status.didJustFinish) {
-            bgSound.replayAsync();  // Replay the sound when it finishes
+            bgSound.unloadAsync();  // Unload the finished sound
+            soundRef.current = null;
+            playSound();  // Play another random song after finishing
           }
         });
 
