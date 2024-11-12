@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "bear",
+    "name": "superbarecore",
     "slug": "bear",
     "scheme": "bear",
     "version": "1.0.0",
@@ -13,7 +13,8 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.i2x.supperBearCpre"
     },
     "android": {
       "adaptiveIcon": {
@@ -26,6 +27,11 @@
     },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "156cc452-4bc8-4a4e-a10e-3d7c97f8d286"
+      }
+    }
   }
 }
